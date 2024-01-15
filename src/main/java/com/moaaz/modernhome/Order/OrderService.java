@@ -6,7 +6,9 @@ import com.moaaz.modernhome.ProductCart.ProductCart;
 import com.moaaz.modernhome.ProductCart.ProductCartRequest;
 
 import com.moaaz.modernhome.User.UserService;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,9 +48,28 @@ public class OrderService {
         // calc order total.
         order.setTotal(calcOrderRequestTotal(order));
 
-        return orderRepository.save(order);
+       return orderRepository.save(order);
+    }
 
-
+    @SneakyThrows
+    public void updateOrder(OrderRequest orderRequest, long orderId) {
+        Order existingOrder = getOrderById(orderId);
+        if (existingOrder.getStatus() != OrderStatus.IN_WAITING)
+            throw new Exception("This Order Can't Be Updated  , It's Out Of Our Modern Home Now.");
+        List<ProductCart> productCarts = orderRequest.getProductCartRequests().stream()
+                .map(productCartRequest -> convertProductCartRequestToProductCart(productCartRequest)).toList();
+        // create order from product cart entities.
+        existingOrder = Order.builder()
+                .id(orderId)
+                .productCarts(productCarts)
+                .user(userService.getUserById(orderRequest.getUserId()))
+                .status(OrderStatus.IN_WAITING)
+                .localDate(LocalDate.now())
+                .code(UUID.randomUUID().toString().substring(0, 10))
+                .build();
+        // calc order total.
+        existingOrder.setTotal(calcOrderRequestTotal(existingOrder));
+        orderRepository.save(existingOrder);
     }
 
     // Make Order In Delivery Status

@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("/moaaz/api/modernhome/orders")
 @RestController
 @CrossOrigin("*")
-@Tag(name="Orders")
+@Tag(name = "Orders")
 //@Api(tags = "Order Controller"  , description = "This class have all endpoints for the orders.")
 
 public class OrderController {
@@ -32,7 +32,7 @@ public class OrderController {
     private OrderMailService orderMailService;
 
 
-//    @ApiOperation(
+    //    @ApiOperation(
 //            value = "Adding Order ",
 //            notes = "Adding Order for user by sending order request"
 //    )
@@ -43,10 +43,16 @@ public class OrderController {
         return new ResponseEntity<>("Order Added Successfully", HttpStatus.CREATED);
     }
 
+    @PostMapping("/updateOrder/{orderId}")
+    public ResponseEntity<?> updateOrder(@RequestBody @Valid OrderRequest orderRequest, @PathVariable long orderId) {
+        orderService.updateOrder(orderRequest, orderId);
+        return new ResponseEntity<>("Order Updated Successfully", HttpStatus.ACCEPTED);
+    }
+
+
     @PostMapping("/accept/{orderId}")
     public ResponseEntity<?> acceptOrder(@PathVariable long orderId) {
         orderMailService.notifyUserOrderIsAccepted(orderService.acceptOrder(orderId));
-
 
 
         return new ResponseEntity<>("Accepted Successfully", HttpStatus.ACCEPTED);
