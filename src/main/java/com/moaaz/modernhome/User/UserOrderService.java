@@ -7,6 +7,7 @@ import com.moaaz.modernhome.Order.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -26,10 +27,10 @@ public class UserOrderService {
     }
 
     public List<Order> rearrangeOrders(List<Order> orders) {
-        Set<Order> allOrders = new HashSet<>();
+        ArrayList<Order> allOrders = new ArrayList<>();
         List<Order> inWaitingOrders = orders.stream().filter(order -> order.getStatus().equals(OrderStatus.IN_WAITING)).toList();
-        List<Order> inDeliveryOrders = orders.stream().filter(order -> order.getStatus().equals(OrderStatus.IN_WAITING)).toList();
-        List<Order> completedOrders = orders.stream().filter(order -> order.getStatus().equals(OrderStatus.IN_WAITING)).toList();
+        List<Order> inDeliveryOrders = orders.stream().filter(order -> order.getStatus().equals(OrderStatus.IN_DELIVERY)).toList();
+        List<Order> completedOrders = orders.stream().filter(order -> order.getStatus().equals(OrderStatus.COMPLETED)).toList();
         allOrders.addAll(inWaitingOrders);
         allOrders.addAll(inDeliveryOrders);
         allOrders.addAll(completedOrders);
