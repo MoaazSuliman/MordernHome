@@ -34,9 +34,12 @@ public class AuthService {
 
         User user = userService.findByEmailAndPassword(email, password).orElse(null);
         if (user != null) {
-            UserResponse userResponse= UserResponse.convertUserToUserResponse(user);
-            userResponse.setPassword("Fuck your mother, password are changed LOL!");
-            return new ResponseEntity<>(userResponse, HttpStatus.ACCEPTED);
+            if (user.isActive()) {
+                UserResponse userResponse = UserResponse.convertUserToUserResponse(user);
+                userResponse.setPassword("Fuck your mother, password are changed LOL!");
+                return new ResponseEntity<>(userResponse, HttpStatus.ACCEPTED);
+            } else
+                return new ResponseEntity<>("We Are Sorry You aren't Active in our site", HttpStatus.BAD_REQUEST);
         }
         Employee employee = employeeService.findByEmailAndPassword(email, password).orElse(null);
         if (employee != null)

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -16,7 +17,6 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
 
 
     @Autowired
@@ -46,6 +46,7 @@ public class UserService {
 //        checkIfEmailAreExistingToThrowException(user.getEmail());
         emailChecker.emailChecker(user.getEmail());
         user.setRole(Role.USER);
+        user.setActive(true);
         return UserResponse.convertUserToUserResponse(userRepository.save(user));
     }
 
@@ -87,5 +88,25 @@ public class UserService {
     public List<UserResponse> getAll() {
         return userRepository.findAll().stream().map(UserResponse::convertUserToUserResponse).toList();
     }
+
+
+    public void makeUserActive(long userId) {
+        User user = getUserById(userId);
+        user.setActive(true);
+        userRepository.save(user);
+    }
+
+    public void makeUserInActive(long id) {
+        User user = getUserById(id);
+        user.setActive(false);
+        userRepository.save(user);
+    }
+
+    public List<UserResponse> getByNameOrEmail(String text) {
+        return userRepository.findAllByNameContainsOrEmailContains(text, text)
+                .stream()
+                .map(UserResponse::convertUserToUserResponse).collect(Collectors.toList());
+    }
+
 
 }

@@ -25,9 +25,24 @@ public class UserController {
 
 
     @GetMapping
-    public ResponseEntity<?>getAll(){
-        return new ResponseEntity<>(userService.getAll() , HttpStatus.OK);
+    public ResponseEntity<?> getAll() {
+        return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
     }
 
+
+    @PostMapping("/inActive/{userId}")
+    public ResponseEntity<?> makeUserInActive(@PathVariable long userId) {
+        userService.makeUserInActive(userId);
+        return new ResponseEntity<>("User Are Not Active Now...", HttpStatus.OK);
+    }
+    @PostMapping("/active/{userId}")
+    public  ResponseEntity<?>makeUserActive(@PathVariable long userId){
+        userService.makeUserActive(userId);
+        return new ResponseEntity<>("User Are  Active Now...", HttpStatus.OK);
+    }
+    @GetMapping("/getUserByUsernameOrEmail")
+    public ResponseEntity<?> getUsersByUsernameOrEmail(@RequestParam String username) {
+        return new ResponseEntity<>(userService.getByNameOrEmail(username), HttpStatus.OK);
+    }
 
 }

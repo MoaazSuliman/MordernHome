@@ -25,6 +25,7 @@ public class UserResponse {
     private String address;
     private String password;
 
+    private boolean active;
     private Role role;
 
 
@@ -49,6 +50,7 @@ public class UserResponse {
                 .phone2(user.getPhone2())
                 .role(user.getRole())
                 .address(user.getAddress())
+                .active(user.isActive())
                 .inWaitingOrders(separateOrders(user, OrderStatus.IN_WAITING).stream().map(OrderResponse::convertOrderToOrderResponse).toList())
                 .inDeliveryOrders(separateOrders(user, OrderStatus.IN_DELIVERY).stream().map(OrderResponse::convertOrderToOrderResponse).toList())
                 .completedOrders(separateOrders(user, OrderStatus.COMPLETED).stream().map(OrderResponse::convertOrderToOrderResponse).toList())
