@@ -1,5 +1,9 @@
 package com.moaaz.modernhome.User;
 
+import com.moaaz.modernhome.Employee.Logs.EmployeeAction;
+import com.moaaz.modernhome.Employee.Logs.EmployeeLog;
+import com.moaaz.modernhome.Employee.Logs.EmployeeLogService;
+import com.moaaz.modernhome.Employee.Logs.LogType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +17,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private EmployeeLogService employeeLogService;
 //    @PostMapping("/login")
 //    public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password) {
 //        return new ResponseEntity<>(userService.login(email, password), HttpStatus.ACCEPTED);
@@ -30,13 +36,19 @@ public class UserController {
     }
 
 
-    @PostMapping("/inActive/{userId}")
-    public ResponseEntity<?> makeUserInActive(@PathVariable long userId) {
+    @PostMapping("/inActive/{userId}/employee/{employeeId}")
+    public ResponseEntity<?> makeUserInActive(@PathVariable long userId , @PathVariable long employeeId) {
+        employeeLogService.saveLog(
+                EmployeeLog.builder().employeeAction(EmployeeAction.INACTIVE).logType(LogType.USER).build(), employeeId
+        );
         userService.makeUserInActive(userId);
         return new ResponseEntity<>("User Are Not Active Now...", HttpStatus.OK);
     }
-    @PostMapping("/active/{userId}")
-    public  ResponseEntity<?>makeUserActive(@PathVariable long userId){
+    @PostMapping("/active/{userId}/employee/{employeeId}")
+    public  ResponseEntity<?>makeUserActive(@PathVariable long userId , @PathVariable long employeeId){
+        employeeLogService.saveLog(
+                EmployeeLog.builder().employeeAction(EmployeeAction.ACTIVE).logType(LogType.USER).build(), employeeId
+        );
         userService.makeUserActive(userId);
         return new ResponseEntity<>("User Are  Active Now...", HttpStatus.OK);
     }

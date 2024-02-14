@@ -26,11 +26,6 @@ public class Category {
     private String details;
     private LocalDate creationDate;
 
-
-//    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "category")
-
-    //    @OneToMany(fetch = FetchType.EAGER, mappedBy = "category")
-//    @OneToMany
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true , fetch = FetchType.EAGER)
     private List<Product> products = new ArrayList<>();
 

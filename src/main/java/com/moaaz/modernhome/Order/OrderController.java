@@ -1,5 +1,9 @@
 package com.moaaz.modernhome.Order;
 
+import com.moaaz.modernhome.Employee.Logs.EmployeeAction;
+import com.moaaz.modernhome.Employee.Logs.EmployeeLog;
+import com.moaaz.modernhome.Employee.Logs.EmployeeLogService;
+import com.moaaz.modernhome.Employee.Logs.LogType;
 import com.moaaz.modernhome.Mail.OrderMailService;
 import com.moaaz.modernhome.User.UserOrderService;
 
@@ -27,6 +31,8 @@ public class OrderController {
     private UserOrderService userOrderService;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private EmployeeLogService employeeLogService;
 
     @Autowired
     private OrderMailService orderMailService;
@@ -50,24 +56,32 @@ public class OrderController {
     }
 
 
-    @PostMapping("/accept/{orderId}")
-    public ResponseEntity<?> acceptOrder(@PathVariable long orderId) {
+    @PostMapping("/accept/{orderId}/employee/{employeeId}")
+    public ResponseEntity<?> acceptOrder(@PathVariable long orderId  , @PathVariable Long employeeId) {
+        employeeLogService.saveLog(
+                EmployeeLog.builder().employeeAction(EmployeeAction.ACCEPT).logType(LogType.ORDER).build(), employeeId
+        );
         orderMailService.notifyUserOrderIsAccepted(orderService.acceptOrder(orderId));
-
-
         return new ResponseEntity<>("Accepted Successfully", HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/complete/{orderId}")
-    public ResponseEntity<?> completeOrder(@PathVariable long orderId) {
+    @PostMapping("/complete/{orderId}/employee/{employeeId}")
+    public ResponseEntity<?> completeOrder(@PathVariable long orderId  , @PathVariable Long employeeId) {
+        employeeLogService.saveLog(
+                EmployeeLog.builder().employeeAction(EmployeeAction.COMPLETE).logType(LogType.ORDER).build(), employeeId
+        );
         orderService.completeOrder(orderId);
         return new ResponseEntity<>("Completed Successfully", HttpStatus.ACCEPTED);
 
     }
 
-    @PostMapping("/previousStatus/{orderId}")
-    public ResponseEntity<?> convertOrderStatusToPreviousStatus(@PathVariable long orderId) {
+    @PostMapping("/previousStatus/{orderId}/employee/{employeeId}")
+    public ResponseEntity<?> convertOrderStatusToPreviousStatus(@PathVariable long orderId , @PathVariable Long employeeId) {
+        employeeLogService.saveLog(
+                EmployeeLog.builder().employeeAction(EmployeeAction.RETURN).logType(LogType.ORDER).build(), employeeId
+        );
         orderService.getPreviousStatus(orderId);
+
         return new ResponseEntity<>("Done Successfully", HttpStatus.ACCEPTED);
     }
 
