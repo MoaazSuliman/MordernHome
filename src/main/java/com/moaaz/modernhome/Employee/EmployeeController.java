@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/moaaz/api/modernhome/employees")
+@RequestMapping("/employees")
 @CrossOrigin("*")
 public class EmployeeController {
 
@@ -39,6 +39,4 @@ public class EmployeeController {
     public ResponseEntity<?> getById(@PathVariable long employeeId) {
         return new ResponseEntity<>(employeeService.getById(employeeId), HttpStatus.OK);
     }
-
-
 }

@@ -4,13 +4,14 @@ import com.moaaz.modernhome.Employee.Logs.EmployeeAction;
 import com.moaaz.modernhome.Employee.Logs.EmployeeLog;
 import com.moaaz.modernhome.Employee.Logs.EmployeeLogService;
 import com.moaaz.modernhome.Employee.Logs.LogType;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("moaaz/api/modernhome/users")
+@RequestMapping("/users")
 @CrossOrigin("*")
 public class UserController {
 
@@ -37,6 +38,7 @@ public class UserController {
 
 
     @PostMapping("/inActive/{userId}/employee/{employeeId}")
+    @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<?> makeUserInActive(@PathVariable long userId , @PathVariable long employeeId) {
         employeeLogService.saveLog(
                 EmployeeLog.builder().employeeAction(EmployeeAction.INACTIVE).logType(LogType.USER).build(), employeeId
@@ -45,6 +47,7 @@ public class UserController {
         return new ResponseEntity<>("User Are Not Active Now...", HttpStatus.OK);
     }
     @PostMapping("/active/{userId}/employee/{employeeId}")
+    @Transactional(rollbackOn = Exception.class)
     public  ResponseEntity<?>makeUserActive(@PathVariable long userId , @PathVariable long employeeId){
         employeeLogService.saveLog(
                 EmployeeLog.builder().employeeAction(EmployeeAction.ACTIVE).logType(LogType.USER).build(), employeeId

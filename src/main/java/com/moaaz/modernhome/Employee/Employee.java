@@ -21,6 +21,7 @@ public class Employee extends Person {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "employee")
+
     private List<EmployeeLog> employeeLogs;
 
 }

@@ -1,31 +1,24 @@
 package com.moaaz.modernhome.Employee.Logs;
 
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.moaaz.modernhome.Employee.Employee;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "employee_log")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class EmployeeLog {
+public class EmployeeLogResponse {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JsonBackReference
-    private Employee employee;
+    private long employeeId;
 
     @Transient
     private String employeeEmail;
@@ -39,7 +32,4 @@ public class EmployeeLog {
     private LocalDateTime creationDate;
 
     private boolean isAdmin;
-    public String getEmployeeEmail() {
-        return this.employee.getEmail();
-    }
 }

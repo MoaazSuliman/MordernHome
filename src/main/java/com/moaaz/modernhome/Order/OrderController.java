@@ -9,6 +9,7 @@ import com.moaaz.modernhome.User.UserOrderService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
-@RequestMapping("/moaaz/api/modernhome/orders")
+@RequestMapping("/orders")
 @RestController
 @CrossOrigin("*")
 @Tag(name = "Orders")
@@ -57,6 +58,7 @@ public class OrderController {
 
 
     @PostMapping("/accept/{orderId}/employee/{employeeId}")
+    @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<?> acceptOrder(@PathVariable long orderId  , @PathVariable Long employeeId) {
         employeeLogService.saveLog(
                 EmployeeLog.builder().employeeAction(EmployeeAction.ACCEPT).logType(LogType.ORDER).build(), employeeId
@@ -66,6 +68,7 @@ public class OrderController {
     }
 
     @PostMapping("/complete/{orderId}/employee/{employeeId}")
+    @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<?> completeOrder(@PathVariable long orderId  , @PathVariable Long employeeId) {
         employeeLogService.saveLog(
                 EmployeeLog.builder().employeeAction(EmployeeAction.COMPLETE).logType(LogType.ORDER).build(), employeeId
@@ -76,6 +79,7 @@ public class OrderController {
     }
 
     @PostMapping("/previousStatus/{orderId}/employee/{employeeId}")
+    @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<?> convertOrderStatusToPreviousStatus(@PathVariable long orderId , @PathVariable Long employeeId) {
         employeeLogService.saveLog(
                 EmployeeLog.builder().employeeAction(EmployeeAction.RETURN).logType(LogType.ORDER).build(), employeeId

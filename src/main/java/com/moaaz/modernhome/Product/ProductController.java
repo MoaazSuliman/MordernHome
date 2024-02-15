@@ -5,12 +5,13 @@ import com.moaaz.modernhome.Employee.Logs.EmployeeAction;
 import com.moaaz.modernhome.Employee.Logs.EmployeeLog;
 import com.moaaz.modernhome.Employee.Logs.EmployeeLogService;
 import com.moaaz.modernhome.Employee.Logs.LogType;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/moaaz/api/modernhome/products")
+@RequestMapping("/products")
 @RestController
 @CrossOrigin("*")
 public class ProductController {
@@ -22,6 +23,7 @@ public class ProductController {
     private EmployeeLogService employeeLogService;
 
     @PostMapping("/employee/{employeeId}")
+    @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<?> addProduct(@RequestBody ProductRequest productRequest, @PathVariable Long employeeId) {
         employeeLogService.saveLog(
                 EmployeeLog.builder().employeeAction(EmployeeAction.ADD).logType(LogType.PRODUCT).build(), employeeId
@@ -30,6 +32,7 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}/employee/{employeeId}")
+    @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<?> updateProduct(@RequestBody ProductRequest productRequest, @PathVariable long productId, @PathVariable Long employeeId) {
         employeeLogService.saveLog(
                 EmployeeLog.builder().employeeAction(EmployeeAction.UPDATE).logType(LogType.PRODUCT).build(), employeeId
@@ -38,6 +41,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/delete/{productId}/employee/{employeeId}")
+    @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<?> deleteProduct(@PathVariable long productId , @PathVariable Long employeeId) {
         employeeLogService.saveLog(
                 EmployeeLog.builder().employeeAction(EmployeeAction.DELETE).logType(LogType.PRODUCT).build(), employeeId

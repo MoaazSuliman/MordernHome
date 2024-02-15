@@ -1,6 +1,7 @@
 package com.moaaz.modernhome.Category;
 
 import com.moaaz.modernhome.Employee.Logs.*;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/moaaz/api/modernhome/categories")
+@RequestMapping("/categories")
 @CrossOrigin("*")
 public class CategoryController {
 
@@ -24,6 +25,7 @@ public class CategoryController {
     }
 
     @PostMapping("/employee/{employeeId}")
+    @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<?> add(@RequestBody @Valid Category category, @PathVariable Long employeeId) {
         employeeLogService.saveLog(
                 EmployeeLog.builder().employeeAction(EmployeeAction.ADD).logType(LogType.CATEGORY).build(), employeeId
@@ -32,6 +34,7 @@ public class CategoryController {
     }
 
     @PutMapping("/update/{categoryId}/employee/{employeeId}")
+    @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<?> update(@RequestBody @Valid Category category, @PathVariable long categoryId, @PathVariable Long employeeId) {
         employeeLogService.saveLog(
                 EmployeeLog.builder().employeeAction(EmployeeAction.UPDATE).logType(LogType.CATEGORY).build(), employeeId
@@ -40,6 +43,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{categoryId}/employee/{employeeId}")
+    @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<?> deleteById(@PathVariable long categoryId, @PathVariable Long employeeId) {
         employeeLogService.saveLog(
                 EmployeeLog.builder().employeeAction(EmployeeAction.UPDATE).logType(LogType.CATEGORY).build(), employeeId

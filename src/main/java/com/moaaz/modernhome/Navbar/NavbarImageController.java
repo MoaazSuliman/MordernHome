@@ -10,7 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter
 import java.util.List;
 
 @RestController
-@RequestMapping("/moaaz/api/modernhome/navbarImages")
+@RequestMapping("/navbarImages")
 @CrossOrigin("*")
 public class NavbarImageController {
 
