@@ -24,7 +24,7 @@ public class EmployeeLog {
     private Long id;
 
     @ManyToOne
-    @JsonBackReference
+    @JsonIgnore
     private Employee employee;
 
     @Transient
