@@ -9,8 +9,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
@@ -18,7 +20,7 @@ import java.util.List;
 @Table(name = "employee")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+
 public class Employee extends Person {
 
     @OneToMany(mappedBy = "employee")

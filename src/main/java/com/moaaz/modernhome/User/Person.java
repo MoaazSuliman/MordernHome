@@ -5,10 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @MappedSuperclass
@@ -16,18 +16,17 @@ import lombok.NoArgsConstructor;
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    protected Long id;
 
-    private long id;
+    protected String name;
 
-    private String name;
+    protected String email;
+    protected String phone1;
+    protected String phone2;
+    protected String address;
+    protected String password;
 
-    private String email;
-    private String phone1;
-    private String phone2;
-    private String address;
-    private String password;
-
-    private Role role;
+    protected Role role;
 
     public static Person admin(){
         Person person= new Person();

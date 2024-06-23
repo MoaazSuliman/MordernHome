@@ -1,7 +1,7 @@
 package com.moaaz.modernhome.Employee.Logs;
 
 import com.moaaz.modernhome.Employee.Employee;
-import com.moaaz.modernhome.Employee.EmployeeService;
+import com.moaaz.modernhome.Employee.EmployeeServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ public class EmployeeLogServiceImp implements EmployeeLogService {
     private EmployeeLogRepository employeeLogRepository;
 
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceImp employeeServiceImp;
 
     @Autowired
     private EmployeeLogMapper employeeLogMapper;
@@ -26,7 +26,7 @@ public class EmployeeLogServiceImp implements EmployeeLogService {
     public void saveLog(EmployeeLog employeeLog, Long employeeId) {
         if (employeeId == 0)
             return;
-        Employee employee = employeeService.getById(employeeId);
+        Employee employee = employeeServiceImp.getById(employeeId);
         employeeLog.setEmployee(employee);
 
         employeeLog.setCreationDate(LocalDateTime.now());
