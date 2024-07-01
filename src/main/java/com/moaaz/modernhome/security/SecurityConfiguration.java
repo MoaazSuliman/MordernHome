@@ -69,7 +69,7 @@ public class SecurityConfiguration {
 							request.requestMatchers(HttpMethod.DELETE, "/categories/**").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.requestMatchers(HttpMethod.GET, "/categories/**").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
 
-
+							request.anyRequest().permitAll();
 						}
 
 				);
