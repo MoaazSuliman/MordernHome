@@ -2,6 +2,10 @@ package com.moaaz.modernhome.Employee.Logs;
 
 import com.moaaz.modernhome.Employee.Employee;
 import com.moaaz.modernhome.Employee.EmployeeServiceImp;
+import com.moaaz.modernhome.User.Role;
+import com.moaaz.modernhome.events.EmployeeEvent;
+import com.moaaz.modernhome.security.enums.UserRole;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,29 +16,32 @@ import java.util.stream.Collectors;
 @Service
 public class EmployeeLogServiceImp implements EmployeeLogService {
 
-    @Autowired
-    private EmployeeLogRepository employeeLogRepository;
+	@Autowired
+	private EmployeeLogRepository employeeLogRepository;
 
-    @Autowired
-    private EmployeeServiceImp employeeServiceImp;
+	@Autowired
+	private EmployeeServiceImp employeeServiceImp;
 
-    @Autowired
-    private EmployeeLogMapper employeeLogMapper;
+	@Autowired
+	private EmployeeLogMapper employeeLogMapper;
 
 
-    @Override
-    public void saveLog(EmployeeLog employeeLog, Long employeeId) {
-        if (employeeId == 0)
-            return;
-        Employee employee = employeeServiceImp.getById(employeeId);
-        employeeLog.setEmployee(employee);
+	@Override
+	public void saveLog(EmployeeLog employeeLog) {
+		Employee employee = employeeLog.getEmployee();
+		if (Role.ADMIN.equals(employee.getRole()))
+			return;
+		employeeServiceImp.getById(employee.getId());
+		employeeLog.setCreationDate(LocalDateTime.now());
+		employeeLogRepository.save(employeeLog);
+	}
 
-        employeeLog.setCreationDate(LocalDateTime.now());
-        employeeLogRepository.save(employeeLog);
-    }
-
-    @Override
-    public List<EmployeeLogResponse> getAll() {
-        return employeeLogRepository.findAll().stream().map(employeeLogMapper::toResponse).collect(Collectors.toList());
-    }
+	@Override
+	public List<EmployeeLogResponse> getAll() {
+		return employeeLogRepository
+				.findAll()
+				.stream()
+				.map(employeeLogMapper::toResponse)
+				.collect(Collectors.toList());
+	}
 }

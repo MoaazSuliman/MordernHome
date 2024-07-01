@@ -1,6 +1,9 @@
 package com.moaaz.modernhome.User;
 
+import com.moaaz.modernhome.Employee.Employee;
+import com.moaaz.modernhome.security.enums.UserRole;
 import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,25 +17,27 @@ import lombok.experimental.SuperBuilder;
 @MappedSuperclass
 
 public class Person {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	protected Long id;
 
-    protected String name;
+	protected String name;
 
-    protected String email;
-    protected String phone1;
-    protected String phone2;
-    protected String address;
-    protected String password;
+	protected String email;
+	protected String phone1;
+	protected String phone2;
+	protected String address;
+	protected String password;
 
-    protected Role role;
+	@Enumerated(EnumType.STRING)
+	protected UserRole role;
 
-    public static Person admin(){
-        Person person= new Person();
-        person.setName("Admin");
-        person.setEmail("modernhomeinegypt@gmail.com");
-        person.setRole(Role.ADMIN);
-        return person;
-    }
+	public static Employee admin() {
+		Employee employee = new Employee();
+		employee.setId(-1L);
+		employee.setName("Admin");
+		employee.setEmail("modernhomeinegypt@gmail.com");
+		employee.setRole(UserRole.ADMIN);
+		return employee;
+	}
 }

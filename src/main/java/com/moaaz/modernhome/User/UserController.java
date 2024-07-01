@@ -4,6 +4,7 @@ import com.moaaz.modernhome.Employee.Logs.EmployeeAction;
 import com.moaaz.modernhome.Employee.Logs.EmployeeLog;
 import com.moaaz.modernhome.Employee.Logs.EmployeeLogService;
 import com.moaaz.modernhome.Employee.Logs.LogType;
+import com.moaaz.modernhome.events.EmployeeEvent;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,12 +19,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private EmployeeLogService employeeLogService;
-//    @PostMapping("/login")
-//    public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password) {
-//        return new ResponseEntity<>(userService.login(email, password), HttpStatus.ACCEPTED);
-//    }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
@@ -37,21 +32,19 @@ public class UserController {
     }
 
 
-    @PostMapping("/inActive/{userId}/employee/{employeeId}")
+    @PostMapping("/inActive/{userId}")
     @Transactional(rollbackOn = Exception.class)
-    public ResponseEntity<?> makeUserInActive(@PathVariable long userId , @PathVariable long employeeId) {
-        employeeLogService.saveLog(
-                EmployeeLog.builder().employeeAction(EmployeeAction.INACTIVE).logType(LogType.USER).build(), employeeId
-        );
+    @EmployeeEvent(type = LogType.USER, action = EmployeeAction.INACTIVE)
+    public ResponseEntity<?> makeUserInActive(@PathVariable long userId) {
+
         userService.makeUserInActive(userId);
         return new ResponseEntity<>("User Are Not Active Now...", HttpStatus.OK);
     }
-    @PostMapping("/active/{userId}/employee/{employeeId}")
+    @PostMapping("/active/{userId}")
     @Transactional(rollbackOn = Exception.class)
-    public  ResponseEntity<?>makeUserActive(@PathVariable long userId , @PathVariable long employeeId){
-        employeeLogService.saveLog(
-                EmployeeLog.builder().employeeAction(EmployeeAction.ACTIVE).logType(LogType.USER).build(), employeeId
-        );
+    @EmployeeEvent(type = LogType.USER, action = EmployeeAction.ACTIVE)
+    public  ResponseEntity<?>makeUserActive(@PathVariable long userId ){
+
         userService.makeUserActive(userId);
         return new ResponseEntity<>("User Are  Active Now...", HttpStatus.OK);
     }

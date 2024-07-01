@@ -3,6 +3,8 @@ package com.moaaz.modernhome.User;
 import com.moaaz.modernhome.Order.Order;
 import com.moaaz.modernhome.Order.OrderResponse;
 import com.moaaz.modernhome.Order.OrderStatus;
+import com.moaaz.modernhome.security.enums.UserRole;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,7 +28,7 @@ public class UserResponse {
     private String password;
 
     private boolean active;
-    private Role role;
+    private UserRole role;
 
 
 

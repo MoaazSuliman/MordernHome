@@ -91,11 +91,5 @@ public class CategoryServiceImp implements CategoryService {
         return categoryMapper.toResponse(category);
     }
 
-    //TODO update product response
-    public List<ProductResponse> getAllProductsForCategory(long categoryId) {
-        Category category = getById(categoryId);
-        return category.getProducts().stream().map(ProductResponse::convertProductToProductResponse).toList();
-    }
-
 
 }

@@ -8,6 +8,6 @@ import java.util.List;
 @Service
 public interface EmployeeLogService {
 
-    public void saveLog(EmployeeLog employeeLog , Long employeeId);
-    public List<EmployeeLogResponse>getAll();
+     void saveLog(EmployeeLog employeeLog);
+     List<EmployeeLogResponse>getAll();
 }

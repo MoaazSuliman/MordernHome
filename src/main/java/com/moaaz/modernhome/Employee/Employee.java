@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.List;
 @Table(name = "employee")
 @AllArgsConstructor
 @NoArgsConstructor
-
+@ToString
 public class Employee extends Person {
 
     @OneToMany(mappedBy = "employee")

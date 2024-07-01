@@ -2,6 +2,8 @@ package com.moaaz.modernhome.User;
 
 
 import com.moaaz.modernhome.Validation.EmailChecker;
+import com.moaaz.modernhome.security.enums.UserRole;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +45,9 @@ public class UserService {
 
     public UserResponse register(User user) {
         log.info("Register Function In The User");
-//        checkIfEmailAreExistingToThrowException(user.getEmail());
+        checkIfEmailAreExistingToThrowException(user.getEmail());
         emailChecker.emailChecker(user.getEmail());
-        user.setRole(Role.USER);
+        user.setRole(UserRole.USER);
         user.setActive(true);
         return UserResponse.convertUserToUserResponse(userRepository.save(user));
     }
@@ -86,7 +88,10 @@ public class UserService {
     }
 
     public List<UserResponse> getAll() {
-        return userRepository.findAll().stream().map(UserResponse::convertUserToUserResponse).toList();
+        return userRepository.findAll()
+                .stream()
+                .map(UserResponse::convertUserToUserResponse)
+                .toList();
     }
 
 

@@ -1,4 +1,4 @@
-package com.moaaz.modernhome.generic;
+package com.moaaz.modernhome.service;
 
 import java.util.List;
 
