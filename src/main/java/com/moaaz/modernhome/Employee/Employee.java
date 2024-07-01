@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.moaaz.modernhome.Employee.Logs.EmployeeLog;
 import com.moaaz.modernhome.User.Person;
+import com.moaaz.modernhome.security.enums.UserRole;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
@@ -28,4 +29,13 @@ public class Employee extends Person {
     @JsonIgnore
     private List<EmployeeLog> employeeLogs;
 
+
+    public static Employee admin() {
+        Employee employee = new Employee();
+        employee.setId(-1L);
+        employee.setName("Admin");
+        employee.setEmail("modernhomeinegypt@gmail.com");
+        employee.setRole(UserRole.ADMIN);
+        return employee;
+    }
 }

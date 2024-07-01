@@ -32,12 +32,5 @@ public class Person {
 	@Enumerated(EnumType.STRING)
 	protected UserRole role;
 
-	public static Employee admin() {
-		Employee employee = new Employee();
-		employee.setId(-1L);
-		employee.setName("Admin");
-		employee.setEmail("modernhomeinegypt@gmail.com");
-		employee.setRole(UserRole.ADMIN);
-		return employee;
-	}
+
 }

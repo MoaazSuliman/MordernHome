@@ -5,10 +5,10 @@ import com.moaaz.modernhome.Product.ProductService;
 import com.moaaz.modernhome.ProductCart.ProductCart;
 import com.moaaz.modernhome.ProductCart.ProductCartRequest;
 
-import com.moaaz.modernhome.User.UserService;
+import com.moaaz.modernhome.User.UserServiceImp;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.sql.Update;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +29,7 @@ public class OrderService {
     @Autowired
     private ProductService productService;
     @Autowired
-    private UserService userService;
+    private UserServiceImp userServiceImp;
 
 
     public Order addOrder(OrderRequest orderRequest) {
@@ -40,7 +40,7 @@ public class OrderService {
         // create order from product cart entities.
         Order order = Order.builder()
                 .productCarts(productCarts)
-                .user(userService.getUserById(orderRequest.getUserId()))
+                .user(userServiceImp.getUserById(orderRequest.getUserId()))
                 .status(OrderStatus.IN_WAITING)
                 .localDate(LocalDate.now())
                 .code(UUID.randomUUID().toString().substring(0, 10))
@@ -62,7 +62,7 @@ public class OrderService {
         existingOrder = Order.builder()
                 .id(orderId)
                 .productCarts(productCarts)
-                .user(userService.getUserById(orderRequest.getUserId()))
+                .user(userServiceImp.getUserById(orderRequest.getUserId()))
                 .status(OrderStatus.IN_WAITING)
                 .localDate(LocalDate.now())
                 .code(UUID.randomUUID().toString().substring(0, 10))

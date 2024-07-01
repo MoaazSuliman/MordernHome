@@ -2,9 +2,8 @@ package com.moaaz.modernhome.Validation;
 
 import com.moaaz.modernhome.Employee.Employee;
 import com.moaaz.modernhome.Employee.EmployeeRepository;
-import com.moaaz.modernhome.Employee.EmployeeServiceImp;
 import com.moaaz.modernhome.User.User;
-import com.moaaz.modernhome.User.UserService;
+import com.moaaz.modernhome.User.UserServiceImp;
 
 import lombok.SneakyThrows;
 
@@ -19,13 +18,13 @@ import java.util.Optional;
 public class EmailChecker {
 
 	@Autowired
-	private UserService userService;
+	private UserServiceImp userServiceImp;
 	@Autowired
 	private EmployeeRepository employeeRepository;
 
 	@SneakyThrows
 	public void emailChecker(String email) {
-		User user = userService.getUserByEmailWithoutException(email);
+		User user = userServiceImp.getUserByEmailWithoutException(email);
 		if (user != null)
 			throw new Exception("This Email Already In Our Database.");
 		Optional<Employee> employeeOptional = employeeRepository.findByEmail(email);

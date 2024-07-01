@@ -61,7 +61,7 @@ public class AuthService {
 
 	public ResponseEntity<?> adminDashboardLogin(String email, String password) {
 		if (email.equals("modernhomeinegypt@gmail.com") && password.equals("ModernHome"))
-			return new ResponseEntity<>(Person.admin(), HttpStatus.ACCEPTED);
+			return new ResponseEntity<>(Employee.admin(), HttpStatus.ACCEPTED);
 		Employee employee = employeeService.findByEmailAndPassword(email, password).orElse(null);
 		if (employee != null)
 			return new ResponseEntity<>(employee, HttpStatus.ACCEPTED);

@@ -33,7 +33,6 @@ public class UserResponse {
 
 
     private List<OrderResponse> inWaitingOrders;
-
     private List<OrderResponse> inDeliveryOrders;
     private List<OrderResponse> completedOrders;
 

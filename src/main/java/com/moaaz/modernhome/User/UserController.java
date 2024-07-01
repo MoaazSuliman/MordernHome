@@ -1,8 +1,6 @@
 package com.moaaz.modernhome.User;
 
 import com.moaaz.modernhome.Employee.Logs.EmployeeAction;
-import com.moaaz.modernhome.Employee.Logs.EmployeeLog;
-import com.moaaz.modernhome.Employee.Logs.EmployeeLogService;
 import com.moaaz.modernhome.Employee.Logs.LogType;
 import com.moaaz.modernhome.events.EmployeeEvent;
 import jakarta.transaction.Transactional;
@@ -21,8 +19,8 @@ public class UserController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
-        return new ResponseEntity<>(userService.register(user), HttpStatus.CREATED);
+    public ResponseEntity<?> register(@RequestBody UserRequest userRequest) {
+        return new ResponseEntity<>(userService.register(userRequest), HttpStatus.CREATED);
     }
 
 
