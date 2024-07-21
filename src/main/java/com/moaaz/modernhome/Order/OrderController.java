@@ -27,8 +27,6 @@ import java.util.List;
 @RestController
 @CrossOrigin("*")
 @Tag(name = "Orders")
-//@Api(tags = "Order Controller"  , description = "This class have all endpoints for the orders.")
-
 public class OrderController {
 
 	@Autowired
@@ -41,19 +39,14 @@ public class OrderController {
 	@Autowired
 	private OrderMailService orderMailService;
 
-
-	//    @ApiOperation(
-//            value = "Adding Order ",
-//            notes = "Adding Order for user by sending order request"
-//    )
 	@Operation(description = "Adding New Order For The User")
-	@PostMapping("/addOrder")
+	@PostMapping
 	public ResponseEntity<?> addOrder(@RequestBody @Valid OrderRequest orderRequest) {
 		orderMailService.notifyUser(orderService.addOrder(orderRequest));
 		return new ResponseEntity<>("Order Added Successfully", HttpStatus.CREATED);
 	}
 
-	@PostMapping("/updateOrder/{orderId}")
+	@PutMapping("/{orderId}")
 	public ResponseEntity<?> updateOrder(@RequestBody @Valid OrderRequest orderRequest, @PathVariable long orderId) {
 		orderService.updateOrder(orderRequest, orderId);
 		return new ResponseEntity<>("Order Updated Successfully", HttpStatus.ACCEPTED);
@@ -83,24 +76,21 @@ public class OrderController {
 	@Transactional(rollbackOn = Exception.class)
 	@EmployeeEvent(type = LogType.ORDER, action = EmployeeAction.RETURN)
 	public ResponseEntity<?> convertOrderStatusToPreviousStatus(@PathVariable long orderId) {
-
 		orderService.getPreviousStatus(orderId);
 		return new ResponseEntity<>("Done Successfully", HttpStatus.ACCEPTED);
 	}
 
 
-	@GetMapping("/getAll")
+	@GetMapping
 	public ResponseEntity<?> getAll() {
 		return new ResponseEntity<>(orderService.getAll(), HttpStatus.OK);
 	}
 
 	@PostMapping("/test")
 	public ResponseEntity<?> getAllBySearch(@RequestBody SearchRequest searchRequest) {
-		log.info("This is the search ", searchRequest);
 		System.out.println(searchRequest.toString());
 		return new ResponseEntity<>(orderService.getAllOrdersFromDateToDateWithStatus(searchRequest), HttpStatus.OK);
 	}
-
 
 	@GetMapping("/getAllForUserByUserId/{userId}")
 	public ResponseEntity<?> getAllForUserByUserId(@PathVariable long userId) {

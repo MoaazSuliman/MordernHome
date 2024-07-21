@@ -2,7 +2,9 @@ package com.moaaz.modernhome.Product;
 
 import com.moaaz.modernhome.Category.Category;
 import jakarta.persistence.*;
+
 import lombok.*;
+
 import org.springframework.data.util.Lazy;
 
 import java.time.LocalDate;
@@ -17,27 +19,34 @@ import java.util.List;
 @ToString
 public class Product {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-    private String name;
+	private String name;
 
-    private String details;
+	private String details;
 
-    private List<String> images;
-    private double price;
-    private double discount;
+	private List<String> images;
 
-    private double total;
+	private double price;
 
-    private LocalDate creationDate;
+	private double discount;
 
-    private boolean isDeleted;
+	@Transient
+	private double total;
 
-    //    @ManyToOne(cascade = {CascadeType.DETACH , CascadeType.MERGE  , CascadeType.PERSIST , CascadeType.REFRESH})
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+	private LocalDate creationDate;
+
+	private boolean isDeleted;
+
+	//    @ManyToOne(cascade = {CascadeType.DETACH , CascadeType.MERGE  , CascadeType.PERSIST , CascadeType.REFRESH})
+	@ManyToOne
+	@JoinColumn(name = "category_id")
+	private Category category;
+
+	public double getTotal() {
+		return this.price - this.price * (this.discount / 100);
+	}
 
 }

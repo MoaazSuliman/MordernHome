@@ -27,10 +27,4 @@ public class ProductCart {
 
     private long quantity;
 
-
-
-//    public static ProductCart convertDtoToEntity(ProductCartRequest productCartRequest){
-//        return ProductCart.builder()
-//                .product(productCartRequest.getProductId())
-//    }
 }

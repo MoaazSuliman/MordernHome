@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order , Long> {
 
-    @Query(value="SELECT o FROM  Order o  WHERE o.localDate>= :fromDate AND o.localDate<= :toDate AND o.status= :orderStatus" )
-    List<Order> getAllOrdersFromDateToDateWithStatus(LocalDate fromDate, LocalDate toDate, OrderStatus orderStatus);
+    @Query(value="SELECT o FROM  Order o  WHERE o.creationTime>= :fromDate AND o.creationTime<= :toDate AND o.status= :orderStatus" )
+    List<Order> getAllOrdersFromCreationTimeToCreationTimeWithStatus(LocalDate fromDate, LocalDate toDate, OrderStatus orderStatus);
 }

@@ -69,6 +69,26 @@ public class SecurityConfiguration {
 							request.requestMatchers(HttpMethod.DELETE, "/categories/**").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.requestMatchers(HttpMethod.GET, "/categories/**").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
 
+							request.requestMatchers(HttpMethod.POST, "/products/**").hasAnyRole("ADMIN", "EMPLOYEE");
+							request.requestMatchers(HttpMethod.PUT, "/products/**").hasAnyRole("ADMIN", "EMPLOYEE");
+							request.requestMatchers(HttpMethod.DELETE, "/products/**").hasAnyRole("ADMIN", "EMPLOYEE");
+							request.requestMatchers(HttpMethod.GET, "/products/**").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
+
+							request.requestMatchers(HttpMethod.POST, "/employees/**").hasAnyRole("ADMIN", "EMPLOYEE");
+							request.requestMatchers(HttpMethod.PUT, "/employees/**").hasAnyRole("ADMIN", "EMPLOYEE");
+							request.requestMatchers(HttpMethod.DELETE, "/employees/**").hasAnyRole("ADMIN", "EMPLOYEE");
+							request.requestMatchers(HttpMethod.GET, "/employees/**").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
+
+							request.requestMatchers(HttpMethod.GET, "/employeeLogs/**").hasAnyRole("ADMIN");
+
+							request.requestMatchers(HttpMethod.POST, "/orders").hasAnyRole("ADMIN", "EMPLOYEE");
+							request.requestMatchers(HttpMethod.PUT, "/orders/*").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
+							request.requestMatchers(HttpMethod.POST, "/orders/*/*").hasAnyRole("ADMIN", "EMPLOYEE");
+							request.requestMatchers(HttpMethod.GET, "/orders").hasAnyRole("ADMIN", "EMPLOYEE");
+							request.requestMatchers(HttpMethod.GET, "/orders/*/*").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
+							request.requestMatchers(HttpMethod.GET, "/orders/*").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
+
+
 							request.anyRequest().permitAll();
 						}
 

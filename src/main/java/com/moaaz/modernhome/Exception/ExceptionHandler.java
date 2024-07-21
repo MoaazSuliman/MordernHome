@@ -34,5 +34,9 @@ public class ExceptionHandler {
     public ResponseEntity<?> handleException(Exception exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
+   @org.springframework.web.bind.annotation.ExceptionHandler(ModernHomeException.class)
+    public ResponseEntity<?> handleException(ModernHomeException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 
 }

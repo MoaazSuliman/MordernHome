@@ -15,19 +15,30 @@ import java.util.List;
 @Slf4j
 @ToString
 public class OrderResponse {
+
     private long id;
+
     private String code;
+
     private List<ProductCartResponse> productCartResponses;
-    private LocalDate creationDate;
+
+    private LocalDate creationTime;
+
     private String name;
+
     private String email;
+
     private String phone1;
+
     private String phone2;
+
     private String address;
 
     private double total;
 
     private OrderStatus status;
+
+    private long userId;
 
     public static OrderResponse convertOrderToOrderResponse(Order order) {
         log.info(order.getCode() + "********************************************************");
@@ -41,7 +52,7 @@ public class OrderResponse {
                 .address(user.getAddress())
                 .email(user.getEmail())
                 .productCartResponses(order.getProductCarts().stream().map(ProductCartResponse::convertProductCartToProductCartResponse).toList())
-                .creationDate(order.getLocalDate())
+                .creationTime(order.getCreationTime())
                 .total(order.getTotal())
                 .status(order.getStatus())
                 .code(order.getCode())

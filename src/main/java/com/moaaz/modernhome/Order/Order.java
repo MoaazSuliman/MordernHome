@@ -3,10 +3,15 @@ package com.moaaz.modernhome.Order;
 import com.moaaz.modernhome.ProductCart.ProductCart;
 import com.moaaz.modernhome.User.User;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+
 import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import org.springframework.data.repository.cdi.Eager;
 
 @Entity
 @Table(name = "user_order")
@@ -17,26 +22,30 @@ import java.util.List;
 @ToString
 public class Order {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
 
-    private String code;
+	@Column(unique = true)
+	private String code;
 
-    @ManyToMany(cascade = CascadeType.ALL , fetch = FetchType.EAGER)
-    private List<ProductCart> productCarts;
-
-    private LocalDate localDate;
-
-    @ManyToOne
-    private User user;
-
-    private double total;
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private List<ProductCart> productCarts;
 
 
-    @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+	@CreationTimestamp
+	@Column(updatable = false)
+	private LocalDate creationTime;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	private User user;
+
+	private double total;
+
+
+	@Enumerated(EnumType.STRING)
+	private OrderStatus status;
 
 
 }
