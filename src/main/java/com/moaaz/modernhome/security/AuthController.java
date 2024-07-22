@@ -30,11 +30,10 @@ public class AuthController {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
         );
-        System.out.println("After Auth");
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        System.out.println("Before Response");
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setId(userDetails.getId());
         loginResponse.setEmail(userDetails.getEmail());

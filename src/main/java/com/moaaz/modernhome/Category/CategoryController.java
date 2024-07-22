@@ -30,9 +30,7 @@ public class CategoryController {
 	@Transactional(rollbackOn = Exception.class)
 	@EmployeeEvent(type = LogType.CATEGORY, action = EmployeeAction.ADD)
 	public ResponseEntity<?> add(@RequestBody @Valid CategoryRequest categoryRequest) {
-//        employeeLogService.saveLog(
-//                EmployeeLog.builder().employeeAction(EmployeeAction.ADD).logType(LogType.CATEGORY).build(), employeeId
-//        );
+
 		return new ResponseEntity<>(categoryServiceImp.add(categoryRequest), HttpStatus.CREATED);
 	}
 
@@ -48,10 +46,8 @@ public class CategoryController {
 
 	@PutMapping("/{categoryId}")
 	@Transactional(rollbackOn = Exception.class)
-	public ResponseEntity<?> update(@RequestBody @Valid CategoryRequest categoryRequest, @PathVariable long categoryId, @PathVariable Long employeeId) {
-//        employeeLogService.saveLog(
-//                EmployeeLog.builder().employeeAction(EmployeeAction.UPDATE).logType(LogType.CATEGORY).build(), employeeId
-//        );
+	public ResponseEntity<?> update(@RequestBody @Valid CategoryRequest categoryRequest, @PathVariable long categoryId) {
+
 		return new ResponseEntity<>(categoryServiceImp.update(categoryRequest, categoryId), HttpStatus.ACCEPTED);
 	}
 
