@@ -88,7 +88,8 @@ public class SecurityConfiguration {
 							request.requestMatchers(HttpMethod.GET, "/orders/*/*").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
 							request.requestMatchers(HttpMethod.GET, "/orders/*").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
 
-
+							//users
+							request.requestMatchers("/users/**").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.anyRequest().permitAll();
 						}
 
