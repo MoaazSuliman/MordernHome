@@ -2,7 +2,7 @@ package com.moaaz.modernhome.Order;
 
 
 import com.moaaz.modernhome.Exception.ModernHomeException;
-import com.moaaz.modernhome.Product.ProductService;
+import com.moaaz.modernhome.Product.service.ProductServiceImp;
 import com.moaaz.modernhome.ProductCart.ProductCart;
 import com.moaaz.modernhome.ProductCart.ProductCartRequest;
 
@@ -28,7 +28,7 @@ public class OrderService {
 	private OrderRepository orderRepository;
 
 	@Autowired
-	private ProductService productService;
+	private ProductServiceImp productServiceImp;
 	@Autowired
 	private UserServiceImp userServiceImp;
 	@Autowired
@@ -143,7 +143,7 @@ public class OrderService {
 
 	private ProductCart convertProductCartRequestToProductCart(ProductCartRequest productCartRequest) {
 		return ProductCart.builder()
-				.product(productService.getProductById(productCartRequest.getProductId()))
+				.product(productServiceImp.getProductById(productCartRequest.getProductId()))
 				.quantity(productCartRequest.getQuantity())
 				.build();
 

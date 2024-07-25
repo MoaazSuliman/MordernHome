@@ -1,20 +1,29 @@
-package com.moaaz.modernhome.Product;
+package com.moaaz.modernhome.Product.service;
 
 import com.moaaz.modernhome.Category.Category;
 import com.moaaz.modernhome.Category.CategoryServiceImp;
+import com.moaaz.modernhome.Product.Product;
+import com.moaaz.modernhome.Product.ProductCriteriaBuilder;
+import com.moaaz.modernhome.Product.ProductMapper;
+import com.moaaz.modernhome.Product.ProductRepository;
+import com.moaaz.modernhome.Product.ProductRequest;
+import com.moaaz.modernhome.Product.ProductResponse;
+import com.moaaz.modernhome.Product.ProductSearch;
 import com.moaaz.modernhome.S3.S3Service;
 
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
 @Slf4j
-public class ProductService {
+public class ProductServiceImp implements ProductService {
 
 
 	@Autowired
@@ -28,6 +37,7 @@ public class ProductService {
 	@Autowired
 	private ProductMapper productMapper;
 
+	@Override
 	public ProductResponse addProduct(ProductRequest productRequest) {
 		Product product = productMapper.toEntity(productRequest);
 		product.setImages(getImagesUrl(product.getImages()));
@@ -36,6 +46,7 @@ public class ProductService {
 
 	}
 
+	@Override
 	public ProductResponse updateProduct(ProductRequest productRequest, long productId) {
 		Product product = getProductById(productId);
 		Category category = categoryServiceImp.getById(productRequest.getCategoryId());
@@ -51,6 +62,7 @@ public class ProductService {
 
 	}
 
+	@Override
 	public List<ProductResponse> search(String text) {
 		String[] strings = text.split(" ");
 		Set<Product> allProducts = new HashSet<>();
@@ -64,6 +76,7 @@ public class ProductService {
 
 	}
 
+	@Override
 	public List<ProductResponse> getAllByCategoryId(long categoryId) {
 		Category category = categoryServiceImp.getById(categoryId);
 		return category.getProducts()
@@ -72,37 +85,47 @@ public class ProductService {
 	}
 
 
+	@Override
 	public void deleteProduct(long productId) {
-
 		Product product = getProductById(productId);// check if product if exist or throw exception
 		product.setDeleted(true);
 		productRepository.save(product);
 
-
 	}
 
+	@Override
 	public ProductResponse getProductResponseById(long productId) {
 		return productMapper.toResponse(getProductById(productId));
 	}
 
+	@Override
 	public Product getProductById(long productId) {
 		return productRepository.findById(productId).orElseThrow(
 				() -> new NoSuchElementException("There Are No Product With id = " + productId)
 		);
 	}
 
-
+	@Override
 	public List<ProductResponse> getAll() {
 		return productRepository.findAllByIsDeleted(false)
 				.stream()
 				.map(productMapper::toResponse).toList();
 	}
 
+	@Override
+	public Page<ProductResponse> getAll(ProductSearch productSearch , Pageable pageable) {
+		Page<Product> page = productRepository.findAll(ProductCriteriaBuilder.getProductPredicate(productSearch), pageable);
+		List<ProductResponse> responses = page.stream().map(productMapper::toResponse).toList();
 
+		return new PageImpl<>(responses, pageable, page.getTotalElements());
+	}
+
+	@Override
 	public List<String> getImagesUrl(List<String> images) {
 		return images.stream().map(this::uploadImageAndGetUrl).toList();
 	}
 
+	@Override
 	public String uploadImageAndGetUrl(String image) {
 		return (!image.startsWith("https")) ? s3Service.uploadImageToS3AndGetImageUrl(image) : image;
 	}

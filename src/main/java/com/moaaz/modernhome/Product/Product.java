@@ -40,7 +40,7 @@ public class Product {
 
 	private boolean isDeleted;
 
-	//    @ManyToOne(cascade = {CascadeType.DETACH , CascadeType.MERGE  , CascadeType.PERSIST , CascadeType.REFRESH})
+
 	@ManyToOne
 	@JoinColumn(name = "category_id")
 	private Category category;

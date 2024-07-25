@@ -1,12 +1,16 @@
 package com.moaaz.modernhome.Product;
 
 import com.moaaz.modernhome.Employee.Logs.EmployeeAction;
-import com.moaaz.modernhome.Employee.Logs.EmployeeLogService;
 import com.moaaz.modernhome.Employee.Logs.LogType;
+import com.moaaz.modernhome.Product.service.ProductServiceImp;
 import com.moaaz.modernhome.events.EmployeeEvent;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/products")
@@ -25,15 +30,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductController {
 
 	@Autowired
-	private ProductService productService;
+	private ProductServiceImp productServiceImp;
 
 
 	@PostMapping
 	@Transactional(rollbackOn = Exception.class)
 	@EmployeeEvent(type = LogType.PRODUCT, action = EmployeeAction.ADD)
-	public ResponseEntity<?> addProduct(@RequestBody ProductRequest productRequest, @PathVariable Long employeeId) {
+	public ResponseEntity<?> addProduct(@RequestBody ProductRequest productRequest) {
 
-		return new ResponseEntity<>(productService.addProduct(productRequest), HttpStatus.CREATED);
+		return new ResponseEntity<>(productServiceImp.addProduct(productRequest), HttpStatus.CREATED);
 	}
 
 	@PutMapping("/{productId}")
@@ -41,7 +46,7 @@ public class ProductController {
 	@Transactional(rollbackOn = Exception.class)
 	public ResponseEntity<?> updateProduct(@RequestBody ProductRequest productRequest, @PathVariable long productId) {
 
-		return new ResponseEntity<>(productService.updateProduct(productRequest, productId), HttpStatus.OK);
+		return new ResponseEntity<>(productServiceImp.updateProduct(productRequest, productId), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{productId}")
@@ -49,29 +54,38 @@ public class ProductController {
 	@EmployeeEvent(type = LogType.PRODUCT, action = EmployeeAction.DELETE)
 	public ResponseEntity<?> deleteProduct(@PathVariable long productId) {
 
-		productService.deleteProduct(productId);
+		productServiceImp.deleteProduct(productId);
 		return new ResponseEntity<>("Deleted Successfully", HttpStatus.OK);
 	}
 
 	@GetMapping
 	public ResponseEntity<?> getAll() {
-		return new ResponseEntity<>(productService.getAll()
+		return new ResponseEntity<>(productServiceImp.getAll()
 				, HttpStatus.OK);
 	}
 
 	@GetMapping("/{productId}")
 	public ResponseEntity<?> getById(@PathVariable long productId) {
-		return new ResponseEntity<>(productService.getProductResponseById(productId), HttpStatus.OK);
+		return new ResponseEntity<>(productServiceImp.getProductResponseById(productId), HttpStatus.OK);
 	}
 
 	@GetMapping("/search/{text}")
 	public ResponseEntity<?> searchByText(@PathVariable String text) {
-		return new ResponseEntity<>(productService.search(text), HttpStatus.OK);
+		return new ResponseEntity<>(productServiceImp.search(text), HttpStatus.OK);
 	}
 
 
 	@GetMapping("/getAllProductsForCategory/{categoryId}")
 	public ResponseEntity<?> getAllProductsForCategory(@PathVariable long categoryId) {
-		return new ResponseEntity<>(productService.getAllByCategoryId(categoryId), HttpStatus.OK);
+		return new ResponseEntity<>(productServiceImp.getAllByCategoryId(categoryId), HttpStatus.OK);
+	}
+
+	@PostMapping("/search")
+	public ResponseEntity<?> search(@RequestBody @Valid ProductSearch productSearch, @RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "10") int size) {
+		Page<ProductResponse> search = productServiceImp.getAll(productSearch, PageRequest.of(page, size));
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("X-Total-Count", String.valueOf(search.getTotalElements()));
+		return new ResponseEntity<>(search.getContent(), headers, HttpStatus.OK);
+
 	}
 }

@@ -70,6 +70,7 @@ public class SecurityConfiguration {
 							request.requestMatchers(HttpMethod.GET, "/categories/**").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
 
 							request.requestMatchers(HttpMethod.POST, "/products/**").hasAnyRole("ADMIN", "EMPLOYEE");
+							request.requestMatchers(HttpMethod.POST, "/products/search").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
 							request.requestMatchers(HttpMethod.PUT, "/products/**").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.requestMatchers(HttpMethod.DELETE, "/products/**").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.requestMatchers(HttpMethod.GET, "/products/**").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
@@ -87,6 +88,8 @@ public class SecurityConfiguration {
 							request.requestMatchers(HttpMethod.GET, "/orders").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.requestMatchers(HttpMethod.GET, "/orders/*/*").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
 							request.requestMatchers(HttpMethod.GET, "/orders/*").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
+
+							request.requestMatchers("/navbarImages").hasAnyRole("ADMIN");
 
 							//users
 							request.requestMatchers("/users/**").hasAnyRole("ADMIN", "EMPLOYEE");

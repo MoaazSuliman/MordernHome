@@ -1,6 +1,6 @@
 package com.moaaz.modernhome.ProductCart;
 
-import com.moaaz.modernhome.Product.ProductService;
+import com.moaaz.modernhome.Product.service.ProductServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
 public class ProductCartService {
 
     @Autowired
-    private  ProductService productService;
+    private ProductServiceImp productServiceImp;
 
     public  ProductCart convertEntityToDto(ProductCartRequest request) {
         return ProductCart.
                 builder()
-                .product(productService.getProductById(request.getProductId()))
+                .product(productServiceImp.getProductById(request.getProductId()))
                 .quantity(request.getQuantity())
                 .build();
     }
