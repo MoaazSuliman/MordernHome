@@ -20,7 +20,7 @@ public class ProductCriteriaBuilder {
 			List<Predicate> predicates = new ArrayList<>();
 			if (nullChecker(productSearch.getName())) {
 				String text = CriteriaService.getSearchText(productSearch.getName());
-				Predicate namePredicate = criteriaBuilder.equal(root.get("name"), text);
+				Predicate namePredicate = criteriaBuilder.like(root.get("name"), text);
 				predicates.add(namePredicate);
 			}
 
@@ -31,7 +31,7 @@ public class ProductCriteriaBuilder {
 			}
 
 			if (nullChecker(productSearch.getPriceGreaterThan())) {
-				Predicate priceGreaterThanPredicate = criteriaBuilder.lessThanOrEqualTo(root.get("price"), productSearch.getPriceGreaterThan());
+				Predicate priceGreaterThanPredicate = criteriaBuilder.greaterThanOrEqualTo(root.get("price"), productSearch.getPriceGreaterThan());
 				predicates.add(priceGreaterThanPredicate);
 			}
 

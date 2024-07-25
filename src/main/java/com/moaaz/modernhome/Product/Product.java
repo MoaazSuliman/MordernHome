@@ -2,6 +2,7 @@ package com.moaaz.modernhome.Product;
 
 import com.moaaz.modernhome.Category.Category;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import lombok.*;
 
@@ -36,6 +37,9 @@ public class Product {
 	@Transient
 	private double total;
 
+
+	@CreationTimestamp
+	@Column(updatable = false)
 	private LocalDate creationDate;
 
 	private boolean isDeleted;

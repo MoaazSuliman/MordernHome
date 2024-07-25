@@ -1,6 +1,7 @@
 package com.moaaz.modernhome.Product.service;
 
 import com.moaaz.modernhome.Category.Category;
+import com.moaaz.modernhome.Category.CategoryService;
 import com.moaaz.modernhome.Category.CategoryServiceImp;
 import com.moaaz.modernhome.Product.Product;
 import com.moaaz.modernhome.Product.ProductCriteriaBuilder;
@@ -11,6 +12,7 @@ import com.moaaz.modernhome.Product.ProductResponse;
 import com.moaaz.modernhome.Product.ProductSearch;
 import com.moaaz.modernhome.S3.S3Service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,24 +25,23 @@ import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProductServiceImp implements ProductService {
 
 
-	@Autowired
-	private ProductRepository productRepository;
 
-	@Autowired
-	private CategoryServiceImp categoryServiceImp;
+	private final ProductRepository productRepository;
 
-	@Autowired
-	private S3Service s3Service;
-	@Autowired
-	private ProductMapper productMapper;
+	private final S3Service s3Service;
+
+	private final ProductMapper productMapper;
+	private final CategoryService categoryService;
 
 	@Override
 	public ProductResponse addProduct(ProductRequest productRequest) {
 		Product product = productMapper.toEntity(productRequest);
 		product.setImages(getImagesUrl(product.getImages()));
+		product.setCategory(categoryService.getById(productRequest.getCategoryId()));
 		Product save = productRepository.save(product);
 		return productMapper.toResponse(save);
 
@@ -49,7 +50,7 @@ public class ProductServiceImp implements ProductService {
 	@Override
 	public ProductResponse updateProduct(ProductRequest productRequest, long productId) {
 		Product product = getProductById(productId);
-		Category category = categoryServiceImp.getById(productRequest.getCategoryId());
+		Category category = categoryService.getById(productRequest.getCategoryId());
 		product.setName(productRequest.getName());
 		product.setDetails(productRequest.getDetails());
 		product.setPrice(productRequest.getPrice());
@@ -78,7 +79,7 @@ public class ProductServiceImp implements ProductService {
 
 	@Override
 	public List<ProductResponse> getAllByCategoryId(long categoryId) {
-		Category category = categoryServiceImp.getById(categoryId);
+		Category category = categoryService.getById(categoryId);
 		return category.getProducts()
 				.stream()
 				.map(productMapper::toResponse).toList();
