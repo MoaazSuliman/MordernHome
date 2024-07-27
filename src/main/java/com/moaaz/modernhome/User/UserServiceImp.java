@@ -18,98 +18,97 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserServiceImp implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
 
-    @Autowired
-    private EmailChecker emailChecker;
+	@Autowired
+	private EmailChecker emailChecker;
 
-    @Autowired
-    private UserMapper userMapper;
-
-
-    @Override
-    public User getUserByEmailWithoutException(String email) {
-        return userRepository.getUserByEmail(email).orElse(null);
-    }
+	@Autowired
+	private UserMapper userMapper;
 
 
-
-    @Override
-    public UserResponse register(UserRequest userRequest) {
-        checkIfEmailAreExistingToThrowException(userRequest.getEmail());
-
-        User user  =  userMapper.toEntity(userRequest);
-        emailChecker.emailChecker(user.getEmail());
-        user.setRole(UserRole.USER);
-        user.setActive(true);
-        return UserResponse.convertUserToUserResponse(userRepository.save(user));
-    }
+	@Override
+	public User getUserByEmailWithoutException(String email) {
+		return userRepository.getUserByEmail(email).orElse(null);
+	}
 
 
-    @Override
-    public User getUserById(long userId) {
-        return userRepository.findById(userId).orElseThrow(
-                () -> new NoSuchElementException("There Are No User WIth Id= " + userId)
-        );
-    }
+	@Override
+	public UserResponse register(UserRequest userRequest) {
+		checkIfEmailAreExistingToThrowException(userRequest.getEmail());
 
-    @Override
-    public User updateUser(UserRequest userRequest, long userId) {
-        User existingUser = getUserById(userId);
-        if (!userRequest.getEmail().equals(existingUser.getEmail()))
-            emailChecker.emailChecker(userRequest.getEmail());
-        existingUser.setName(userRequest.getName());
-        existingUser.setEmail(userRequest.getEmail());
-        existingUser.setAddress(userRequest.getAddress());
-        existingUser.setPhone1(userRequest.getPhone1());
-        existingUser.setPhone2(userRequest.getPhone2());
-
-        return userRepository.save(existingUser);
-    }
+		User user = userMapper.toEntity(userRequest);
+		emailChecker.emailChecker(user.getEmail());
+		user.setRole(UserRole.USER);
+		user.setActive(true);
+		return userMapper.toResponse(user);
+	}
 
 
-    @SneakyThrows
-    @Override
-    public void checkIfEmailAreExistingToThrowException(String email) {
-        log.info("Here In Email Checker!");
-        User user = userRepository.findByEmail(email).orElse(null);
-        if (user != null)
-            throw new NoSuchElementException("This Email Already In Our Database!");
-        log.info("User Aren't Equal To Null");
+	@Override
+	public User getUserById(long userId) {
+		return userRepository.findById(userId).orElseThrow(
+				() -> new NoSuchElementException("There Are No User WIth Id= " + userId)
+		);
+	}
 
-    }
+	@Override
+	public User updateUser(UserRequest userRequest, long userId) {
+		User existingUser = getUserById(userId);
+		if (!userRequest.getEmail().equals(existingUser.getEmail()))
+			emailChecker.emailChecker(userRequest.getEmail());
+		existingUser.setName(userRequest.getName());
+		existingUser.setEmail(userRequest.getEmail());
+		existingUser.setAddress(userRequest.getAddress());
+		existingUser.setPhone1(userRequest.getPhone1());
+		existingUser.setPhone2(userRequest.getPhone2());
 
-    @Override
-    public List<UserResponse> getAll() {
-        return userRepository.findAll()
-                .stream()
-                .map(UserResponse::convertUserToUserResponse)
-                .toList();
-    }
+		return userRepository.save(existingUser);
+	}
 
 
-    @Override
-    public void makeUserActive(long userId) {
-        User user = getUserById(userId);
-        user.setActive(true);
-        userRepository.save(user);
-    }
+	@SneakyThrows
+	@Override
+	public void checkIfEmailAreExistingToThrowException(String email) {
+		log.info("Here In Email Checker!");
+		User user = userRepository.findByEmail(email).orElse(null);
+		if (user != null)
+			throw new NoSuchElementException("This Email Already In Our Database!");
+		log.info("User Aren't Equal To Null");
 
-    @Override
-    public void makeUserInActive(long id) {
-        User user = getUserById(id);
-        user.setActive(false);
-        userRepository.save(user);
-    }
+	}
 
-    @Override
-    public List<UserResponse> getByNameOrEmail(String text) {
-        return userRepository.findAllByNameContainsOrEmailContains(text, text)
-                .stream()
-                .map(UserResponse::convertUserToUserResponse).collect(Collectors.toList());
-    }
+	@Override
+	public List<UserResponse> getAll() {
+		return userRepository.findAll()
+				.stream()
+				.map(userMapper::toResponse)
+				.toList();
+	}
+
+
+	@Override
+	public void makeUserActive(long userId) {
+		User user = getUserById(userId);
+		user.setActive(true);
+		userRepository.save(user);
+	}
+
+	@Override
+	public void makeUserInActive(long id) {
+		User user = getUserById(id);
+		user.setActive(false);
+		userRepository.save(user);
+	}
+
+	@Override
+	public List<UserResponse> getByNameOrEmail(String text) {
+		return userRepository.findAllByNameContainsOrEmailContains(text, text)
+				.stream()
+				.map(userMapper::toResponse).collect(Collectors.toList());
+	}
 
 
 }

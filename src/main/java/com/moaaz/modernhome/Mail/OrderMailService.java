@@ -1,44 +1,84 @@
 package com.moaaz.modernhome.Mail;
 
 import com.moaaz.modernhome.Order.Order;
-import jakarta.mail.Message;
+import jakarta.annotation.PostConstruct;
+import jakarta.mail.internet.MimeMessage;
+import org.mapstruct.ap.shaded.freemarker.cache.ClassTemplateLoader;
+import org.mapstruct.ap.shaded.freemarker.template.Configuration;
+import org.mapstruct.ap.shaded.freemarker.template.Template;
+import org.mapstruct.ap.shaded.freemarker.template.TemplateException;
+import org.mapstruct.ap.shaded.freemarker.template.TemplateExceptionHandler;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OrderMailService {
 
-    @Autowired
-    private JavaMailSender javaMailSender;
+	@Autowired
+	private JavaMailSender javaMailSender;
+
+	private Configuration configuration;
+
+	@PostConstruct
+	private void initConfiguration() {
+		configuration = new Configuration(Configuration.VERSION_2_3_20);
+		configuration.setTemplateLoader(new ClassTemplateLoader(getClass(), "/freemarkers"));
+		configuration.setDefaultEncoding("UTF-8");
+		configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+
+	}
+	@Async
+	public void notifyUser(Order order) {
+		sendMessage(order.getUser().getEmail(), "Your Order With Code '" + order.getCode() + "' Has Been Created", order.getUser().getName(), order.getCode(), "created");
+	}
+
+	@Async
+	public void notifyUserOrderIsAccepted(Order order) {
+		sendMessage(order.getUser().getEmail(), "Your Order With Code '" + order.getCode() + "' Has Been Accepted", order.getUser().getName(), order.getCode(), "accepted");
+	}
 
 
-    public void notifyUser(Order order) {
-        sendMessage(order.getUser().getEmail(), "Your Order With Code '" + order.getCode() + "' Has Been Created");
-    }
+	@Async
+	public void notifyUserOrderIsCompleted(Order order) {
+		sendMessage(order.getUser().getEmail(), "Your Order With Code '" + order.getCode() + "' Has Been Completed", order.getUser().getName(), order.getCode(), "completed");
+	}
 
-    public void notifyUserOrderIsAccepted(Order order) {
-        sendMessage(order.getUser().getEmail(), "Your Order With Code '" + order.getCode() + "' Has Been Accepted , You Will Get It in 2 days");
-    }
+	private String processTemplate(String templateName, Map<String, Object> model) throws IOException, TemplateException {
+		Template template = configuration.getTemplate(templateName);
+		StringWriter writer = new StringWriter();
+		template.process(model, writer);
+		return writer.getBuffer().toString();
+	}
 
-    public void notifyUserOrderIsRejected(Order order) {
-        sendMessage(order.getUser().getEmail(), "Your Order With Code '" + order.getCode() + "' Has Been Rejected");
-    }
+	public void sendMessage(String email, String subject, String userName, String orderCode, String orderStatus) {
+		try {
+			Map<String, Object> model = new HashMap<>();
+			model.put("userName", userName);
+			model.put("orderCode", orderCode);
+			model.put("orderStatus", orderStatus);
 
-    public void sendMessage(String email, String content) {
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("modernhomeinegypt@gmail.com");
-            message.setTo(email);
-            message.setText(content);
-            message.setSubject("Modern Home");
-            javaMailSender.send(message);
+			String content = processTemplate("OrderMailTemplate.ftl", model);
 
-        } catch (MailException mailException) {
-            throw mailException;
-        }
-    }
+			MimeMessage message = javaMailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+			helper.setFrom("modernhomeinegypt@gmail.com");
+			helper.setTo(email);
+			helper.setSubject(subject);
+			helper.setText(content, true); // 'true' indicates HTML content
+
+			javaMailSender.send(message);
+		} catch (Exception mailException) {
+			throw new RuntimeException(mailException.getMessage());
+		}
+	}
 
 }

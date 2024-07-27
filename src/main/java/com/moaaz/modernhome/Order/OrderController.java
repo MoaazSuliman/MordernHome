@@ -1,26 +1,29 @@
 package com.moaaz.modernhome.Order;
 
 import com.moaaz.modernhome.Employee.Logs.EmployeeAction;
-import com.moaaz.modernhome.Employee.Logs.EmployeeLog;
 import com.moaaz.modernhome.Employee.Logs.EmployeeLogService;
 import com.moaaz.modernhome.Employee.Logs.LogType;
 import com.moaaz.modernhome.Mail.OrderMailService;
 import com.moaaz.modernhome.User.UserOrderService;
-
 import com.moaaz.modernhome.events.EmployeeEvent;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequestMapping("/orders")
@@ -39,12 +42,12 @@ public class OrderController {
 	@Autowired
 	private OrderMailService orderMailService;
 
-	@Operation(description = "Adding New Order For The User")
-	@PostMapping
-	public ResponseEntity<?> addOrder(@RequestBody @Valid OrderRequest orderRequest) {
-		orderMailService.notifyUser(orderService.addOrder(orderRequest));
-		return new ResponseEntity<>("Order Added Successfully", HttpStatus.CREATED);
-	}
+		@Operation(description = "Adding New Order For The User")
+		@PostMapping
+		public ResponseEntity<?> addOrder(@RequestBody @Valid OrderRequest orderRequest) {
+			orderService.addOrder(orderRequest);
+			return new ResponseEntity<>("Order Added Successfully", HttpStatus.CREATED);
+		}
 
 	@PutMapping("/{orderId}")
 	public ResponseEntity<?> updateOrder(@RequestBody @Valid OrderRequest orderRequest, @PathVariable long orderId) {
@@ -57,8 +60,7 @@ public class OrderController {
 	@Transactional(rollbackOn = Exception.class)
 	@EmployeeEvent(action = EmployeeAction.ACCEPT, type = LogType.ORDER)
 	public ResponseEntity<?> acceptOrder(@PathVariable long orderId) {
-
-		orderMailService.notifyUserOrderIsAccepted(orderService.acceptOrder(orderId));
+		orderService.acceptOrder(orderId);
 		return new ResponseEntity<>("Accepted Successfully", HttpStatus.ACCEPTED);
 	}
 
@@ -66,7 +68,6 @@ public class OrderController {
 	@Transactional(rollbackOn = Exception.class)
 	@EmployeeEvent(type = LogType.ORDER, action = EmployeeAction.COMPLETE)
 	public ResponseEntity<?> completeOrder(@PathVariable long orderId) {
-
 		orderService.completeOrder(orderId);
 		return new ResponseEntity<>("Completed Successfully", HttpStatus.ACCEPTED);
 

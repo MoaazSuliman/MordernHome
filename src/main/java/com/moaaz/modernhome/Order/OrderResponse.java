@@ -40,23 +40,5 @@ public class OrderResponse {
 
     private long userId;
 
-    public static OrderResponse convertOrderToOrderResponse(Order order) {
-        log.info(order.getCode() + "********************************************************");
-        User user = order.getUser();
-        return OrderResponse
-                .builder()
-                .id(order.getId())
-                .name(user.getName())
-                .phone1(user.getPhone1())
-                .phone2(user.getPhone2())
-                .address(user.getAddress())
-                .email(user.getEmail())
-                .productCartResponses(order.getProductCarts().stream().map(ProductCartResponse::convertProductCartToProductCartResponse).toList())
-                .creationTime(order.getCreationTime())
-                .total(order.getTotal())
-                .status(order.getStatus())
-                .code(order.getCode())
-                .build();
-    }
 
 }

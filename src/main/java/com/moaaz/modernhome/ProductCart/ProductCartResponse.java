@@ -15,17 +15,7 @@ import java.time.LocalDate;
 public class ProductCartResponse {
 
     private long id;
-    private ProductResponse productResponse;
+    private long productId;
     private long quantity;
 
-
-    public static ProductCartResponse convertProductCartToProductCartResponse(ProductCart productCart) {
-
-        return ProductCartResponse
-                .builder()
-                .id(productCart.getId())
-                .productResponse(ProductResponse.convertProductToProductResponse(productCart.getProduct()))
-                .quantity(productCart.getQuantity())
-                .build();
-    }
 }

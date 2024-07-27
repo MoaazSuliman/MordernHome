@@ -2,12 +2,15 @@ package com.moaaz.modernhome.Order;
 
 
 import com.moaaz.modernhome.Exception.ModernHomeException;
-import com.moaaz.modernhome.Product.service.ProductServiceImp;
+import com.moaaz.modernhome.Mail.OrderMailService;
+import com.moaaz.modernhome.Product.service.ProductService;
 import com.moaaz.modernhome.ProductCart.ProductCart;
+import com.moaaz.modernhome.ProductCart.ProductCartMapper;
 import com.moaaz.modernhome.ProductCart.ProductCartRequest;
 
-import com.moaaz.modernhome.User.UserServiceImp;
+import com.moaaz.modernhome.User.UserService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,45 +25,55 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class OrderService {
 
-	@Autowired
-	private OrderRepository orderRepository;
 
-	@Autowired
-	private ProductServiceImp productServiceImp;
-	@Autowired
-	private UserServiceImp userServiceImp;
-	@Autowired
-	private OrderMapper orderMapper;
+	private final OrderRepository orderRepository;
 
 
-	public Order addOrder(OrderRequest orderRequest) {
+	private final UserService userService;
+
+	private final OrderMapper orderMapper;
+	private final ProductCartMapper productCartMapper;
+
+	private final OrderMailService orderMailService;
+
+
+	public OrderResponse addOrder(OrderRequest orderRequest) {
 		Order order = orderMapper.toEntity(orderRequest);
-		order.setCode(UUID.randomUUID().toString().substring(0, 10));
-		order.setUser(userServiceImp.getUserById(orderRequest.getUserId()));
 
-		return orderRepository.save(order);
+		order.setCode(UUID.randomUUID().toString().substring(0, 10));
+		order.setStatus(OrderStatus.IN_WAITING);
+		order.setUser(userService.getUserById(orderRequest.getUserId()));
+		setOrderCart(order, orderRequest);
+
+		Order createdOrder = orderRepository.save(order);
+		orderMailService.notifyUser(createdOrder);
+		return orderMapper.toResponse(createdOrder);
+	}
+
+	private void setOrderCart(Order order, OrderRequest orderRequest) {
+		List<ProductCart> productCarts = orderRequest.getProductCartRequests().stream().map(productCartMapper::toEntity).toList();
+		order.setProductCarts(productCarts);
 	}
 
 
-	public void updateOrder(OrderRequest orderRequest, long orderId) {
+	public OrderResponse updateOrder(OrderRequest orderRequest, long orderId) {
 		Order existingOrder = getOrderById(orderId);
 		canUpdateThisOrder(existingOrder);
 		List<ProductCart> productCarts = orderRequest.getProductCartRequests().stream()
-				.map(productCartRequest -> convertProductCartRequestToProductCart(productCartRequest)).toList();
+				.map(productCartMapper::toEntity).toList();
 		// create order from product cart entities.
 		existingOrder = Order.builder()
 				.id(orderId)
 				.productCarts(productCarts)
-				.user(userServiceImp.getUserById(orderRequest.getUserId()))
+				.user(userService.getUserById(orderRequest.getUserId()))
 				.status(OrderStatus.IN_WAITING)
-				.creationTime(LocalDate.now())
 				.code(UUID.randomUUID().toString().substring(0, 10))
 				.build();
-		// calc order total.
-		existingOrder.setTotal(calcOrderRequestTotal(existingOrder));
-		orderRepository.save(existingOrder);
+
+		return orderMapper.toResponse(orderRepository.save(existingOrder));
 	}
 
 	private void canUpdateThisOrder(Order existingOrder) {
@@ -71,16 +84,20 @@ public class OrderService {
 	// Make Order In Delivery Status
 	public Order acceptOrder(long orderId) {
 		Order order = getOrderById(orderId);
-		if (order.getStatus() == OrderStatus.IN_WAITING)
+		if (order.getStatus() == OrderStatus.IN_WAITING) {
 			order.setStatus(OrderStatus.IN_DELIVERY);
+			orderMailService.notifyUserOrderIsAccepted(order);
+		}
 		return orderRepository.save(order);
 	}
 
 	// Make Order Completed
 	public Order completeOrder(long orderId) {
 		Order order = getOrderById(orderId);
-		if (order.getStatus() == OrderStatus.IN_DELIVERY)
+		if (order.getStatus() == OrderStatus.IN_DELIVERY) {
 			order.setStatus(OrderStatus.COMPLETED);
+			orderMailService.notifyUserOrderIsCompleted(order);
+		}
 		return orderRepository.save(order);
 	}
 
@@ -98,28 +115,22 @@ public class OrderService {
 
 	// get all completed orders from date to date that have status
 	public List<OrderResponse> getAllOrdersFromDateToDateWithStatus(SearchRequest searchRequest) {
-		log.info("{0}" + searchRequest);
+
 		searchRequest.getOptimizedSearchRequest();
-		log.info("{0}" + searchRequest);
 		return orderRepository.getAllOrdersFromCreationTimeToCreationTimeWithStatus
 						(searchRequest.getFromDate(),
 								searchRequest.getToDate(),
 								searchRequest.getOrderStatus())
 				.stream()
-				.map(OrderResponse::convertOrderToOrderResponse)
+				.map(orderMapper::toResponse)
 				.toList();
 	}
 
 	public List<?> getAll() {
-		log.info("Getting All*****************************************************");
 		List<Order> orders = orderRepository.findAll();
-		List<OrderResponse> responses = orders.stream()
-				.map(order -> OrderResponse.convertOrderToOrderResponse(order))
+		return orders.stream()
+				.map(orderMapper::toResponse)
 				.toList();
-		responses.forEach(
-				response -> log.info(response.getCode() + "**************")
-		);
-		return responses;
 	}
 
 	private Order getOrderById(long orderId) {
@@ -128,26 +139,6 @@ public class OrderService {
 		);
 	}
 
-	private String dateOfNow() {
-		// Create a LocalDate object
-		LocalDate date = LocalDate.now();
-
-		// Define the desired date format
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-
-		// Format the LocalDate as a string
-		return date.format(formatter);
-
-
-	}
-
-	private ProductCart convertProductCartRequestToProductCart(ProductCartRequest productCartRequest) {
-		return ProductCart.builder()
-				.product(productServiceImp.getProductById(productCartRequest.getProductId()))
-				.quantity(productCartRequest.getQuantity())
-				.build();
-
-	}
 
 	private double calcOrderRequestTotal(Order order) {
 
@@ -161,15 +152,6 @@ public class OrderService {
 	}
 
 	public OrderResponse getById(long id) {
-		Order order = orderRepository.findById(id).orElseThrow(
-				() -> new NoSuchElementException("There Are No Order With Id = " + id)
-		);
-		return OrderResponse.convertOrderToOrderResponse(order);
-
+		return orderMapper.toResponse(getOrderById(id));
 	}
-
-	// delete from order TODO
-
-
-	// update order quantity that are in the order TODO
 }

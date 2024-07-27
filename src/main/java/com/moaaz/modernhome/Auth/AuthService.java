@@ -1,40 +1,40 @@
 package com.moaaz.modernhome.Auth;
 
-
 import com.moaaz.modernhome.Employee.Employee;
 import com.moaaz.modernhome.Employee.EmployeeRepository;
 import com.moaaz.modernhome.Mail.AuthMailService;
-import com.moaaz.modernhome.User.Person;
 import com.moaaz.modernhome.User.User;
+import com.moaaz.modernhome.User.UserMapper;
 import com.moaaz.modernhome.User.UserRepository;
 import com.moaaz.modernhome.User.UserResponse;
 import com.moaaz.modernhome.security.CustomUserDetails;
 import com.moaaz.modernhome.security.enums.UserRole;
 
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
 
-	@Autowired
-	private UserRepository userService;
+	private final UserRepository userService;
 
-	@Autowired
-	private EmployeeRepository employeeService;
 
-	@Autowired
-	private AuthMailService authMailService;
+	private final EmployeeRepository employeeService;
+
+
+	private final AuthMailService authMailService;
+
+	private final UserMapper userMapper;
 
 
 	public ResponseEntity<?> userLogin(String email, String password) {
@@ -45,7 +45,7 @@ public class AuthService {
 		User user = userService.findByEmailAndPassword(email, password).orElse(null);
 		if (user != null) {
 			if (user.isActive()) {
-				UserResponse userResponse = UserResponse.convertUserToUserResponse(user);
+				UserResponse userResponse = userMapper.toResponse(user);
 				userResponse.setPassword("Fuck your mother, password are changed LOL!");
 				return new ResponseEntity<>(userResponse, HttpStatus.ACCEPTED);
 			} else
@@ -59,14 +59,7 @@ public class AuthService {
 
 	}
 
-	public ResponseEntity<?> adminDashboardLogin(String email, String password) {
-		if (email.equals("modernhomeinegypt@gmail.com") && password.equals("ModernHome"))
-			return new ResponseEntity<>(Employee.admin(), HttpStatus.ACCEPTED);
-		Employee employee = employeeService.findByEmailAndPassword(email, password).orElse(null);
-		if (employee != null)
-			return new ResponseEntity<>(employee, HttpStatus.ACCEPTED);
-		return new ResponseEntity<>("Wrong In Email Or Password ", HttpStatus.UNAUTHORIZED);
-	}
+
 
 	public ResponseEntity<?> forgetPassword(String email) {
 
@@ -121,5 +114,4 @@ public class AuthService {
 
 		return Optional.empty();
 	}
-
 }
