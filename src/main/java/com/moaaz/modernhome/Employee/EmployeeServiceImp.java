@@ -50,7 +50,7 @@ public class EmployeeServiceImp implements EmployeeService {
 
 	@Override
 	public List<EmployeeResponse> getAll() {
-		return employeeRepository.findAll()
+		return employeeRepository.findAllByActiveIsTrue()
 				.stream()
 				.map(employeeMapper::toResponse)
 				.collect(Collectors.toList());
@@ -58,15 +58,17 @@ public class EmployeeServiceImp implements EmployeeService {
 
 	@Override
 	public void delete(Long id) {
-		getById(id);
-		employeeRepository.deleteById(id);
+		Employee employee = getById(id);
+		employee.setActive(false);
+		employeeRepository.save(employee);
+
 	}
 
-	@SneakyThrows
+
 	public void checkEmailIfExistToThrowException(String email) {
-		Employee employee = employeeRepository.findByEmail(email).orElse(null);
-		if (employee != null)
-			throw new Exception("This Email Already In Our Database");
+		employeeRepository.findByEmail(email)
+				.orElseThrow(() -> new NoSuchElementException("This Email Already In Our Database"));
+
 	}
 
 	public Employee getById(Long id) {
@@ -74,6 +76,7 @@ public class EmployeeServiceImp implements EmployeeService {
 				() -> new NoSuchElementException("There Are No Emp With Id Equals To " + id)
 		);
 	}
+
 	public EmployeeResponse getResponseById(Long id) {
 		Employee byId = getById(id);
 		return employeeMapper.toResponse(byId);

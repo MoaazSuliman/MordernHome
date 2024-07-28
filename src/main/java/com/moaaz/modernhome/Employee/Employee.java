@@ -1,22 +1,18 @@
 package com.moaaz.modernhome.Employee;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.moaaz.modernhome.Employee.Logs.EmployeeLog;
 import com.moaaz.modernhome.User.Person;
 import com.moaaz.modernhome.security.enums.UserRole;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "employee")
@@ -25,17 +21,17 @@ import java.util.List;
 @ToString
 public class Employee extends Person {
 
-    @OneToMany(mappedBy = "employee")
-    @JsonIgnore
-    private List<EmployeeLog> employeeLogs;
+	@OneToMany(mappedBy = "employee")
+	@JsonIgnore
+	private List<EmployeeLog> employeeLogs;
 
 
-    public static Employee admin() {
-        Employee employee = new Employee();
-        employee.setId(-1L);
-        employee.setName("Admin");
-        employee.setEmail("modernhomeinegypt@gmail.com");
-        employee.setRole(UserRole.ADMIN);
-        return employee;
-    }
+	public static Employee admin() {
+		Employee employee = new Employee();
+		employee.setId(-1L);
+		employee.setName("Admin");
+		employee.setEmail("modernhomeinegypt@gmail.com");
+		employee.setRole(UserRole.ADMIN);
+		return employee;
+	}
 }

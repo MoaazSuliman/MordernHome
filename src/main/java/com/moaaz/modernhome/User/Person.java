@@ -23,6 +23,8 @@ public class Person {
 
 	protected String name;
 
+	private boolean active = true;
+
 	protected String email;
 	protected String phone1;
 	protected String phone2;

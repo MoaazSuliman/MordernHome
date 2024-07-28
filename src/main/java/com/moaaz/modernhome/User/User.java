@@ -17,7 +17,6 @@ import java.util.List;
 @NoArgsConstructor
 public class User extends Person {
 
-    private boolean active = true;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Order> orders;
