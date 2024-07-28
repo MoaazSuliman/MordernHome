@@ -26,30 +26,8 @@ public class UserResponse {
 	private String phone2;
 	private String address;
 	private String password;
-
 	private boolean active;
-
 	private UserRole role;
-
-	private List<OrderResponse> inWaitingOrders;
-
-	private List<OrderResponse> inDeliveryOrders;
-
-	private List<OrderResponse> completedOrders;
-
-
-	public List<OrderResponse> getCompletedOrders() {
-		return this.inWaitingOrders == null ? new ArrayList<>() : this.inWaitingOrders;
-	}
-
-	public List<OrderResponse> getInDeliveryOrders() {
-		return this.inDeliveryOrders == null ? new ArrayList<>() : this.inDeliveryOrders;
-	}
-
-
-	public List<OrderResponse> getInWaitingOrders() {
-		return this.completedOrders == null ? new ArrayList<>() : this.completedOrders;
-	}
 
 
 }

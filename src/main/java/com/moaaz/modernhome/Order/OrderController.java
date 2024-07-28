@@ -87,15 +87,15 @@ public class OrderController {
 		return new ResponseEntity<>(orderService.getAll(), HttpStatus.OK);
 	}
 
-	@PostMapping("/test")
-	public ResponseEntity<?> getAllBySearch(@RequestBody SearchRequest searchRequest) {
-		System.out.println(searchRequest.toString());
-		return new ResponseEntity<>(orderService.getAllOrdersFromDateToDateWithStatus(searchRequest), HttpStatus.OK);
-	}
 
 	@GetMapping("/getAllForUserByUserId/{userId}")
 	public ResponseEntity<?> getAllForUserByUserId(@PathVariable long userId) {
 		return new ResponseEntity<>(userOrderService.getAllOrdersForUser(userId), HttpStatus.OK);
+	}
+
+	@GetMapping("/getAllForUserByUserId/{userId}/status/{orderStatus}")
+	public ResponseEntity<?> getAllForUserByIdDependOnOrderStatus(@PathVariable long userId , @PathVariable OrderStatus orderStatus) {
+		return new ResponseEntity<>(userOrderService.getAllOrdersForUserAndStatus(userId , orderStatus), HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}")

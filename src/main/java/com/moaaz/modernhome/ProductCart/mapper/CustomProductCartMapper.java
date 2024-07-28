@@ -8,17 +8,17 @@ import com.moaaz.modernhome.ProductCart.ProductCartResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CustomProductCartMapper {
-	private final ProductCartMapper productCartMapper;
-	private final ProductService productService;
+	@Autowired
+	private  ProductCartMapper productCartMapper;
+	@Autowired
+	private  ProductService productService;
 
-	public CustomProductCartMapper(ProductCartMapper productCartMapper, ProductService productService) {
-		this.productCartMapper = productCartMapper;
-		this.productService = productService;
-	}
+
 
 	public ProductCart toEntity(ProductCartRequest productCartRequest) {
 		ProductCart entity = productCartMapper.toEntity(productCartRequest);

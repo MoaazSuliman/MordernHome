@@ -3,10 +3,14 @@ package com.moaaz.modernhome.Order;
 import com.moaaz.modernhome.ProductCart.mapper.CustomProductCartMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring", uses = { CustomProductCartMapper.class })
 
 public interface OrderMapper {
+
 
 
 	@Mapping(target = "productCarts", source = "orderRequest.productCartRequests")
@@ -20,6 +24,7 @@ public interface OrderMapper {
 	@Mapping(target = "userId", source = "order.user.id")
 	@Mapping(target = "productCartResponses", source = "productCarts")
 	OrderResponse toResponse(Order order);
+	List<OrderResponse> toResponse(List<Order> order);
 
 
 }

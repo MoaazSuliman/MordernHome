@@ -11,23 +11,20 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserServiceImp implements UserService {
 
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
 
+	private final EmailChecker emailChecker;
 
-	@Autowired
-	private EmailChecker emailChecker;
-
-	@Autowired
-	private UserMapper userMapper;
-
+	private final UserMapper userMapper;
 
 	@Override
 	public User getUserByEmailWithoutException(String email) {
@@ -73,12 +70,8 @@ public class UserServiceImp implements UserService {
 	@SneakyThrows
 	@Override
 	public void checkIfEmailAreExistingToThrowException(String email) {
-		log.info("Here In Email Checker!");
-		User user = userRepository.findByEmail(email).orElse(null);
-		if (user != null)
-			throw new NoSuchElementException("This Email Already In Our Database!");
-		log.info("User Aren't Equal To Null");
-
+		userRepository.findByEmail(email)
+				.orElseThrow(() -> new NoSuchElementException("This Email Already In Our Database!"));
 	}
 
 	@Override
