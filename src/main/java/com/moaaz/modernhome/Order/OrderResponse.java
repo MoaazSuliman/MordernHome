@@ -1,7 +1,8 @@
 package com.moaaz.modernhome.Order;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.moaaz.modernhome.ProductCart.ProductCartResponse;
-import com.moaaz.modernhome.User.User;
+
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,6 +23,7 @@ public class OrderResponse {
 
     private List<ProductCartResponse> productCartResponses;
 
+    @JsonProperty("creationDate")
     private LocalDate creationTime;
 
     private String name;

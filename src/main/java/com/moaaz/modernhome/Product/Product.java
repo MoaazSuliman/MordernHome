@@ -9,6 +9,7 @@ import lombok.*;
 import org.springframework.data.util.Lazy;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,7 +29,8 @@ public class Product {
 
 	private String details;
 
-	private List<String> images;
+
+	private List<String> images = new ArrayList<>();
 
 	private double price;
 

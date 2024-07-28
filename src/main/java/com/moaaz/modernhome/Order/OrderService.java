@@ -3,25 +3,17 @@ package com.moaaz.modernhome.Order;
 
 import com.moaaz.modernhome.Exception.ModernHomeException;
 import com.moaaz.modernhome.Mail.OrderMailService;
-import com.moaaz.modernhome.Product.service.ProductService;
-import com.moaaz.modernhome.ProductCart.ProductCart;
-import com.moaaz.modernhome.ProductCart.ProductCartMapper;
-import com.moaaz.modernhome.ProductCart.ProductCartRequest;
-
+import com.moaaz.modernhome.ProductCart.mapper.CustomProductCartMapper;
 import com.moaaz.modernhome.User.UserService;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -35,42 +27,40 @@ public class OrderService {
 	private final UserService userService;
 
 	private final OrderMapper orderMapper;
-	private final ProductCartMapper productCartMapper;
+
 
 	private final OrderMailService orderMailService;
 
 
 	public OrderResponse addOrder(OrderRequest orderRequest) {
+
 		Order order = orderMapper.toEntity(orderRequest);
+
 
 		order.setCode(UUID.randomUUID().toString().substring(0, 10));
 		order.setStatus(OrderStatus.IN_WAITING);
 		order.setUser(userService.getUserById(orderRequest.getUserId()));
-		setOrderCart(order, orderRequest);
+
 
 		Order createdOrder = orderRepository.save(order);
 		orderMailService.notifyUser(createdOrder);
-		return orderMapper.toResponse(createdOrder);
-	}
 
-	private void setOrderCart(Order order, OrderRequest orderRequest) {
-		List<ProductCart> productCarts = orderRequest.getProductCartRequests().stream().map(productCartMapper::toEntity).toList();
-		order.setProductCarts(productCarts);
+		return orderMapper.toResponse(createdOrder);
+
+
 	}
 
 
 	public OrderResponse updateOrder(OrderRequest orderRequest, long orderId) {
 		Order existingOrder = getOrderById(orderId);
+		Order comingOrder = orderMapper.toEntity(orderRequest);
 		canUpdateThisOrder(existingOrder);
-		List<ProductCart> productCarts = orderRequest.getProductCartRequests().stream()
-				.map(productCartMapper::toEntity).toList();
-		// create order from product cart entities.
+
+		// update status, product in cart.
 		existingOrder = Order.builder()
 				.id(orderId)
-				.productCarts(productCarts)
-				.user(userService.getUserById(orderRequest.getUserId()))
+				.productCarts(comingOrder.getProductCarts())
 				.status(OrderStatus.IN_WAITING)
-				.code(UUID.randomUUID().toString().substring(0, 10))
 				.build();
 
 		return orderMapper.toResponse(orderRepository.save(existingOrder));

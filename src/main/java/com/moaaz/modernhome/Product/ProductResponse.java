@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -21,7 +22,7 @@ public class ProductResponse {
 
 	private String details;
 
-	private List<String> images;
+	private List<String> images = new ArrayList<>();
 
 	private double price;
 
@@ -36,21 +37,7 @@ public class ProductResponse {
 	private String categoryName;
 
 
-	public static ProductResponse convertProductToProductResponse(Product converterProduct) {
-		// check if this doesn't have a category to create a default category for him.
-
-
-		return ProductResponse
-				.builder()
-				.id(converterProduct.getId())
-				.name(converterProduct.getName())
-				.details(converterProduct.getDetails())
-				.price(converterProduct.getPrice())
-				.discount(converterProduct.getDiscount())
-				.total(converterProduct.getTotal())
-				.images(converterProduct.getImages())
-				.categoryName(converterProduct.getCategory().getName())
-				.creationDate(converterProduct.getCreationDate())
-				.build();
+	public List<String> getImages() {
+		return this.images == null ? new ArrayList<>() : this.images;
 	}
 }

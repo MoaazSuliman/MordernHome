@@ -43,7 +43,8 @@ public class UserServiceImp implements UserService {
 		emailChecker.emailChecker(user.getEmail());
 		user.setRole(UserRole.USER);
 		user.setActive(true);
-		return userMapper.toResponse(user);
+
+		return userMapper.toResponse(userRepository.save(user));
 	}
 
 

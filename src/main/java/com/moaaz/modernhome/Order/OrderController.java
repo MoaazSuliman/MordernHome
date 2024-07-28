@@ -42,12 +42,12 @@ public class OrderController {
 	@Autowired
 	private OrderMailService orderMailService;
 
-		@Operation(description = "Adding New Order For The User")
-		@PostMapping
-		public ResponseEntity<?> addOrder(@RequestBody @Valid OrderRequest orderRequest) {
-			orderService.addOrder(orderRequest);
-			return new ResponseEntity<>("Order Added Successfully", HttpStatus.CREATED);
-		}
+	@Operation(description = "Adding New Order For The User")
+	@PostMapping
+	public ResponseEntity<?> addOrder(@RequestBody @Valid OrderRequest orderRequest) {
+
+		return new ResponseEntity<>(orderService.addOrder(orderRequest), HttpStatus.CREATED);
+	}
 
 	@PutMapping("/{orderId}")
 	public ResponseEntity<?> updateOrder(@RequestBody @Valid OrderRequest orderRequest, @PathVariable long orderId) {

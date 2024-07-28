@@ -18,26 +18,38 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserResponse {
-    private long id;
-    private String name;
+	private long id;
+	private String name;
 
-    private String email;
-    private String phone1;
-    private String phone2;
-    private String address;
-    private String password;
+	private String email;
+	private String phone1;
+	private String phone2;
+	private String address;
+	private String password;
 
-    private boolean active;
-    private UserRole role;
+	private boolean active;
 
-    private List<OrderResponse> inWaitingOrders;
+	private UserRole role;
 
-    private List<OrderResponse> inDeliveryOrders;
+	private List<OrderResponse> inWaitingOrders;
 
-    private List<OrderResponse> completedOrders;
+	private List<OrderResponse> inDeliveryOrders;
+
+	private List<OrderResponse> completedOrders;
 
 
+	public List<OrderResponse> getCompletedOrders() {
+		return this.inWaitingOrders == null ? new ArrayList<>() : this.inWaitingOrders;
+	}
 
+	public List<OrderResponse> getInDeliveryOrders() {
+		return this.inDeliveryOrders == null ? new ArrayList<>() : this.inDeliveryOrders;
+	}
+
+
+	public List<OrderResponse> getInWaitingOrders() {
+		return this.completedOrders == null ? new ArrayList<>() : this.completedOrders;
+	}
 
 
 }

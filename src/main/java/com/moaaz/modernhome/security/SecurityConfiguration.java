@@ -92,6 +92,7 @@ public class SecurityConfiguration {
 							request.requestMatchers("/navbarImages").hasAnyRole("ADMIN");
 
 							//users
+							request.requestMatchers("/users").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.requestMatchers("/users/**").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.anyRequest().permitAll();
 						}
