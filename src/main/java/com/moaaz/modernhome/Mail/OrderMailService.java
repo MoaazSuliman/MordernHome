@@ -1,13 +1,14 @@
 package com.moaaz.modernhome.Mail;
 
 import com.moaaz.modernhome.Order.Order;
-import jakarta.annotation.PostConstruct;
+import freemarker.core.ParseException;
+import freemarker.template.Configuration;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateNotFoundException;
 import jakarta.mail.internet.MimeMessage;
-import org.mapstruct.ap.shaded.freemarker.cache.ClassTemplateLoader;
-import org.mapstruct.ap.shaded.freemarker.template.Configuration;
-import org.mapstruct.ap.shaded.freemarker.template.Template;
-import org.mapstruct.ap.shaded.freemarker.template.TemplateException;
-import org.mapstruct.ap.shaded.freemarker.template.TemplateExceptionHandler;
+
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -26,20 +27,23 @@ public class OrderMailService {
 	@Autowired
 	private JavaMailSender javaMailSender;
 
+	@Autowired
 	private Configuration configuration;
 
-	@PostConstruct
-	private void initConfiguration() {
-		configuration = new Configuration(Configuration.VERSION_2_3_20);
-		configuration.setTemplateLoader(new ClassTemplateLoader(getClass(), "/freemarkers"));
-		configuration.setDefaultEncoding("UTF-8");
-		configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+//	@PostConstruct
+//	private void initConfiguration() {
+//		configuration = new Configuration(Configuration.VERSION_2_3_20);
+//		configuration.setTemplateLoader(new ClassTemplateLoader(getClass(), "/freemarkers"));
+//		configuration.setDefaultEncoding("UTF-8");
+//		configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+//
+//	}
 
-	}
 	@Async
 	public void notifyUser(Order order) {
 		sendMessage(order.getUser().getEmail(), "Your Order With Code '" + order.getCode() + "' Has Been Created", order.getUser().getName(), order.getCode(), "created");
 	}
+
 
 	@Async
 	public void notifyUserOrderIsAccepted(Order order) {
@@ -47,18 +51,34 @@ public class OrderMailService {
 	}
 
 
+
 	@Async
 	public void notifyUserOrderIsCompleted(Order order) {
 		sendMessage(order.getUser().getEmail(), "Your Order With Code '" + order.getCode() + "' Has Been Completed", order.getUser().getName(), order.getCode(), "completed");
 	}
 
-	private String processTemplate(String templateName, Map<String, Object> model) throws IOException, TemplateException {
-		Template template = configuration.getTemplate(templateName);
-		StringWriter writer = new StringWriter();
-		template.process(model, writer);
-		return writer.getBuffer().toString();
+	private String processTemplate(String templateName, Map<String, Object> model)  {
+		try{
+			Template template = configuration.getTemplate(templateName);
+			StringWriter writer = new StringWriter();
+			template.process(model, writer);
+			return writer.getBuffer().toString();
+		} catch (TemplateException e) {
+			throw new RuntimeException(e);
+		} catch (TemplateNotFoundException e) {
+			throw new RuntimeException(e);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		} catch (MalformedTemplateNameException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+
 	}
 
+	@Async
 	public void sendMessage(String email, String subject, String userName, String orderCode, String orderStatus) {
 		try {
 			Map<String, Object> model = new HashMap<>();
