@@ -41,11 +41,16 @@ public class Order {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private User user;
 
-	private double total;
 
+	@Transient
+	private double total;
 
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
 
+
+	public double getTotal() {
+		return this.productCarts.stream().mapToDouble(ProductCart::getTotal).sum();
+	}
 
 }
