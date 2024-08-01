@@ -72,33 +72,33 @@ public class OrderService {
 	}
 
 	// Make Order In Delivery Status
-	public Order acceptOrder(long orderId) {
+	public void acceptOrder(long orderId) {
 		Order order = getOrderById(orderId);
-		if (order.getStatus() == OrderStatus.IN_WAITING) {
+		if (OrderStatus.IN_WAITING.equals(order.getStatus())) {
 			order.setStatus(OrderStatus.IN_DELIVERY);
 			orderMailService.notifyUserOrderIsAccepted(order);
 		}
-		return orderRepository.save(order);
+		orderRepository.save(order);
 	}
 
 	// Make Order Completed
-	public Order completeOrder(long orderId) {
+	public void completeOrder(long orderId) {
 		Order order = getOrderById(orderId);
-		if (order.getStatus() == OrderStatus.IN_DELIVERY) {
+		if (OrderStatus.IN_DELIVERY.equals(order.getStatus())) {
 			order.setStatus(OrderStatus.COMPLETED);
 			orderMailService.notifyUserOrderIsCompleted(order);
 		}
-		return orderRepository.save(order);
+		orderRepository.save(order);
 	}
 
 	// return previous status
-	public Order getPreviousStatus(long orderId) {
+	public void getPreviousStatus(long orderId) {
 		Order order = getOrderById(orderId);
-		if (order.getStatus() == OrderStatus.COMPLETED)
+		if (OrderStatus.COMPLETED.equals(order.getStatus()))
 			order.setStatus(OrderStatus.IN_DELIVERY);
-		else if (order.getStatus() == OrderStatus.IN_DELIVERY)
+		else if (OrderStatus.IN_DELIVERY.equals(order.getStatus()))
 			order.setStatus(OrderStatus.IN_WAITING);
-		return orderRepository.save(order);
+		orderRepository.save(order);
 
 	}
 //    public Order
