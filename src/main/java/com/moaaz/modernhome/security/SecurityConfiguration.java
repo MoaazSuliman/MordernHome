@@ -67,7 +67,7 @@ public class SecurityConfiguration {
 							request.requestMatchers(HttpMethod.POST, "/categories/**").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.requestMatchers(HttpMethod.PUT, "/categories/**").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.requestMatchers(HttpMethod.DELETE, "/categories/**").hasAnyRole("ADMIN", "EMPLOYEE");
-							request.requestMatchers(HttpMethod.GET, "/categories/**").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
+							request.requestMatchers(HttpMethod.GET, "/categories/**").permitAll();
 
 							request.requestMatchers(HttpMethod.POST, "/products").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.requestMatchers(HttpMethod.PUT, "/products/*").hasAnyRole("ADMIN", "EMPLOYEE");
