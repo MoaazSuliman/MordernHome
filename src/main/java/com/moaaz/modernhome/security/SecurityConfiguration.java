@@ -69,7 +69,8 @@ public class SecurityConfiguration {
 							request.requestMatchers(HttpMethod.DELETE, "/categories/**").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.requestMatchers(HttpMethod.GET, "/categories/**").permitAll();
 
-							request.requestMatchers(HttpMethod.POST, "/products").hasAnyRole("ADMIN", "EMPLOYEE");
+							request.requestMatchers(HttpMethod.POST, "/products").hasAnyRole("ADMIN", "EMPLOYEE" , "USER");
+							request.requestMatchers(HttpMethod.POST, "/products/search").hasAnyRole("ADMIN", "EMPLOYEE" , "USER");
 							request.requestMatchers(HttpMethod.PUT, "/products/*").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.requestMatchers(HttpMethod.DELETE, "/products/*").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.requestMatchers(HttpMethod.GET, "/products/**").permitAll();
@@ -83,7 +84,7 @@ public class SecurityConfiguration {
 
 							request.requestMatchers(HttpMethod.GET, "/employeeLogs/**").hasAnyRole("ADMIN");
 
-							request.requestMatchers(HttpMethod.POST, "/orders").hasAnyRole("ADMIN", "EMPLOYEE");
+							request.requestMatchers(HttpMethod.POST, "/orders").hasAnyRole("ADMIN", "EMPLOYEE" , "USER");
 							request.requestMatchers(HttpMethod.PUT, "/orders/*").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
 							request.requestMatchers(HttpMethod.POST, "/orders/*/*").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.requestMatchers(HttpMethod.GET, "/orders").hasAnyRole("ADMIN", "EMPLOYEE");
