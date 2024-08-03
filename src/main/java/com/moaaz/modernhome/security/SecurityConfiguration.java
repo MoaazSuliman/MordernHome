@@ -70,10 +70,10 @@ public class SecurityConfiguration {
 							request.requestMatchers(HttpMethod.GET, "/categories/**").permitAll();
 
 							request.requestMatchers(HttpMethod.POST, "/products").hasAnyRole("ADMIN", "EMPLOYEE" , "USER");
-							request.requestMatchers(HttpMethod.POST, "/products/search").hasAnyRole("ADMIN", "EMPLOYEE" , "USER");
 							request.requestMatchers(HttpMethod.PUT, "/products/*").hasAnyRole("ADMIN", "EMPLOYEE");
-							request.requestMatchers(HttpMethod.DELETE, "/products/*").hasAnyRole("ADMIN", "EMPLOYEE");
-							request.requestMatchers(HttpMethod.GET, "/products/**").permitAll();
+					request.requestMatchers(HttpMethod.DELETE, "/products/*").hasAnyRole("ADMIN", "EMPLOYEE");
+					request.requestMatchers(HttpMethod.POST, "/products/search").permitAll();
+					request.requestMatchers(HttpMethod.GET, "/products/**").permitAll();
 
 
 
