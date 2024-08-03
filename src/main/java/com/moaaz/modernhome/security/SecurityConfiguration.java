@@ -51,7 +51,8 @@ public class SecurityConfiguration {
 				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				.authorizeHttpRequests(request -> {
 
-							request.requestMatchers("/auth/login").permitAll();
+							request.requestMatchers("/auth/**").permitAll();
+
 							request.requestMatchers("/v2/api-docs",
 									"/v3/api-docs",
 									"/v3/api-docs/**",
@@ -69,12 +70,11 @@ public class SecurityConfiguration {
 							request.requestMatchers(HttpMethod.DELETE, "/categories/**").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.requestMatchers(HttpMethod.GET, "/categories/**").permitAll();
 
-							request.requestMatchers(HttpMethod.POST, "/products").hasAnyRole("ADMIN", "EMPLOYEE" , "USER");
+							request.requestMatchers(HttpMethod.POST, "/products").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
 							request.requestMatchers(HttpMethod.PUT, "/products/*").hasAnyRole("ADMIN", "EMPLOYEE");
-					request.requestMatchers(HttpMethod.DELETE, "/products/*").hasAnyRole("ADMIN", "EMPLOYEE");
-					request.requestMatchers(HttpMethod.POST, "/products/search").permitAll();
-					request.requestMatchers(HttpMethod.GET, "/products/**").permitAll();
-
+							request.requestMatchers(HttpMethod.DELETE, "/products/*").hasAnyRole("ADMIN", "EMPLOYEE");
+							request.requestMatchers(HttpMethod.POST, "/products/search").permitAll();
+							request.requestMatchers(HttpMethod.GET, "/products/**").permitAll();
 
 
 							request.requestMatchers(HttpMethod.POST, "/employees/**").hasAnyRole("ADMIN", "EMPLOYEE");
@@ -84,7 +84,7 @@ public class SecurityConfiguration {
 
 							request.requestMatchers(HttpMethod.GET, "/employeeLogs/**").hasAnyRole("ADMIN");
 
-							request.requestMatchers(HttpMethod.POST, "/orders").hasAnyRole("ADMIN", "EMPLOYEE" , "USER");
+							request.requestMatchers(HttpMethod.POST, "/orders").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
 							request.requestMatchers(HttpMethod.PUT, "/orders/*").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
 							request.requestMatchers(HttpMethod.POST, "/orders/*/*").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.requestMatchers(HttpMethod.GET, "/orders").hasAnyRole("ADMIN", "EMPLOYEE");

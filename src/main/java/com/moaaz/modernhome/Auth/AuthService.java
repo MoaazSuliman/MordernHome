@@ -77,12 +77,12 @@ public class AuthService {
 			authMailService.sendPasswordToEmail(employee.getEmail(), employee.getPassword());
 			return sentPasswordSuccessfully();
 		}
-		return new ResponseEntity<>("This Email Aren't In Our Database!", HttpStatus.UNAUTHORIZED);
+		return new ResponseEntity<>("This Email Isn't In Our Database!", HttpStatus.UNAUTHORIZED);
 
 	}
 
 	public ResponseEntity<?> sentPasswordSuccessfully() {
-		return new ResponseEntity<>("The Password Send To Gmail Successfully", HttpStatus.ACCEPTED);
+		return new ResponseEntity<>("The Password Sent to Gmail Successfully", HttpStatus.ACCEPTED);
 	}
 
 

@@ -19,7 +19,7 @@ public class AuthMailService {
             message.setFrom("modernhomeinegypt@gmail.com");
             message.setTo(email);
             message.setText("Your Password From Modern Home Web Application System is "
-                    + password + " \n I Will Kill You If You Forget Password Again...");
+                    + password + " \n I will kill you if you forget your password again...");
             message.setSubject("Modern Home");
             javaMailSender.send(message);
 
