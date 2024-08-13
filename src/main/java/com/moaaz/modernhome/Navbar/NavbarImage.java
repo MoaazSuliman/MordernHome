@@ -21,6 +21,8 @@ public class NavbarImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(columnDefinition = "LONGTEXT")
+    @Lob
     private String imageUrl;
 
 }

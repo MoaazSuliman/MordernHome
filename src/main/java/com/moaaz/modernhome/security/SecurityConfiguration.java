@@ -91,11 +91,12 @@ public class SecurityConfiguration {
 							request.requestMatchers(HttpMethod.GET, "/orders/*/*").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
 							request.requestMatchers(HttpMethod.GET, "/orders/*").hasAnyRole("ADMIN", "EMPLOYEE", "USER");
 
-							request.requestMatchers("/navbarImages").hasAnyRole("ADMIN");
+
 
 							//users
 							request.requestMatchers("/users").hasAnyRole("ADMIN", "EMPLOYEE");
 							request.requestMatchers("/users/**").hasAnyRole("ADMIN", "EMPLOYEE");
+							request.requestMatchers("/navbarImages/").permitAll();
 							request.anyRequest().permitAll();
 						}
 
